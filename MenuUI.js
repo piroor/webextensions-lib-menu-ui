@@ -27,6 +27,11 @@ const MenuUI = function(aParams = {}) {
   this.screen = document.createElement('div');
   this.screen.classList.add(`menu-ui-${this.uniqueKey}-blocking-screen`);
   this.root.parentNode.insertBefore(this.screen, this.root.nextSibling);
+
+  this.marker = document.createElement('span');
+  this.marker.classList.add(`menu-ui-${this.uniqueKey}-marker`);
+  this.marker.classList.add(this.appearance);
+  this.root.parentNode.insertBefore(this.marker, this.root.nextSibling);
 };
 
 MenuUI.uniqueKey = parseInt(Math.random() * Math.pow(2, 16));
@@ -76,6 +81,7 @@ MenuUI.prototype = {
       this.onClosed();
     }
     this.lastFocusedItem = null;
+    this.anchor = aOptions.anchor;
     for (let item of Array.slice(this.root.querySelectorAll('li:not(.separator)'))) {
       item.tabIndex = 0;
       item.classList.remove('open');
@@ -87,6 +93,11 @@ MenuUI.prototype = {
     }
     this.root.classList.add('open');
     this.screen.classList.add('open');
+    if (this.anchor) {
+      this.anchor.classList.add('open');
+      this.marker.style.transition = `opacity ${this.animationDuration}ms ease-out`;
+      this.marker.classList.add('open');
+    }
     const menus = [this.root].concat(Array.slice(this.root.querySelectorAll('ul')));
     for (let menu of menus) {
       if (this.animationDuration)
@@ -106,8 +117,45 @@ MenuUI.prototype = {
   },
 
   updatePosition(aMenu, aOptions = {}) {
-    var left = aOptions.left;
-    var top  = aOptions.top;
+    let left = aOptions.left;
+    let top  = aOptions.top;
+    const containerRect = this.containerRect;
+    const menuRect      = aMenu.getBoundingClientRect();
+
+    if (aOptions.anchor &&
+        (left === undefined || top === undefined)) {
+      const anchorRect = aOptions.anchor.getBoundingClientRect();
+      this.marker.classList.remove('top');
+      this.marker.classList.remove('bottom');
+      if (containerRect.bottom - anchorRect.bottom >= menuRect.height) {
+        top = anchorRect.bottom;
+        this.marker.classList.add('top');
+        this.marker.style.top = `calc(${top}px - 0.4em)`;
+      }
+      else if (anchorRect.top - containerRect.top >= menuRect.height) {
+        top = Math.max(0, anchorRect.top - menuRect.height);
+        this.marker.classList.add('bottom');
+        this.marker.style.top = `calc(${top}px + ${menuRect.height}px - 0.6em)`;
+      }
+      else {
+        top = Math.max(0, containerRect.top - menuRect.height);
+        this.marker.classList.add('bottom');
+        this.marker.style.top = `calc(${top}px + ${menuRect.height}px - 0.6em)`;
+      }
+
+      if (containerRect.right - anchorRect.left >= menuRect.width) {
+        left = anchorRect.left;
+        this.marker.style.left = `calc(${left}px + 0.5em)`;
+      }
+      else if (anchorRect.left - containerRect.left >= menuRect.width) {
+        left = Math.max(0, anchorRect.right - menuRect.width);
+        this.marker.style.left = `calc(${left}px + ${menuRect.width}px - 1.5em)`;
+      }
+      else {
+        left = Math.max(0, containerRect.left - menuRect.width);
+        this.marker.style.left = `calc(${left}px + ${menuRect.width}px - 1.5em)`;
+      }
+    }
 
     if (aMenu.parentNode.localName == 'li') {
       let parentRect = aMenu.parentNode.getBoundingClientRect();
@@ -115,15 +163,21 @@ MenuUI.prototype = {
       top  = parentRect.top;
     }
 
-    let menuRect = aMenu.getBoundingClientRect();
-    let containerRect = this.containerRect;
-    left = left || Math.max(0, (containerRect.width - menuRect.width) / 2);
-    top  = top  || Math.max(0, (containerRect.height - menuRect.height) / 2);
+    if (left === undefined)
+      left = Math.max(0, (containerRect.width - menuRect.width) / 2);
+    if (top === undefined)
+      top = Math.max(0, (containerRect.height - menuRect.height) / 2);
 
-    left = Math.min(left, containerRect.width - menuRect.width - 3);
-    top  = Math.min(top,  containerRect.height - menuRect.height - 3);
+    const minMargin = 3;
+    left = Math.max(minMargin, Math.min(left, containerRect.width - menuRect.width - minMargin));
+    top  = Math.max(minMargin, Math.min(top,  containerRect.height - menuRect.height - minMargin));
     aMenu.style.left = `${left}px`;
-    aMenu.style.top  = `${top}px`;
+    if (aMenu == this.root && this.marker.classList.contains('top'))
+      aMenu.style.top = `calc(${top}px + 0.5em)`;
+    else if (aMenu == this.root && this.marker.classList.contains('bottom'))
+      aMenu.style.top = `calc(${top}px - 0.5em)`;
+    else
+      aMenu.style.top = `${top}px`;
   },
 
   close: async function() {
@@ -131,7 +185,12 @@ MenuUI.prototype = {
       return;
     this.root.classList.remove('open');
     this.screen.classList.remove('open');
+    if (this.anchor) {
+      this.anchor.classList.remove('open');
+      this.marker.classList.remove('open');
+    }
     this.lastFocusedItem = null;
+    this.anchor = null;
     return new Promise((aResolve, aReject) => {
       this.closeTimeout = setTimeout(() => {
         delete this.closeTimeout;
@@ -547,12 +606,20 @@ MenuUI.installStyles = function() {
       background: transparent;
     }
 
+    .menu-ui-${this.uniqueKey}-marker {
+      display: none;
+      opacity: 0;
+      pointer-events: none;
+      position: fixed;
+      z-index: 999999;
+    }
+
     /* panel-like appearance */
     .menu-ui-${this.uniqueKey}.panel,
     .menu-ui-${this.uniqueKey}.panel ul {
       background: -moz-dialog;
       border-radius: 0.5em;
-      box-shadow: 0.1em 0.1em 0.5em rgba(0, 0, 0, 0.65);
+      box-shadow: 0.1em 0.1em 0.8em rgba(0, 0, 0, 0.65);
       color: -moz-dialogtext;
       padding: 0.5em 0;
     }
@@ -571,6 +638,27 @@ MenuUI.installStyles = function() {
     .menu-ui-${this.uniqueKey}.panel li:not(.separator).open ul li:not(:focus):not(.open) {
       color: -moz-dialogtext;
     }
+
+    .menu-ui-${this.uniqueKey}-marker.panel {
+      border: 0.5em solid transparent;
+      content: "";
+      display: block;
+      height: 0;
+      left: 0;
+      width: 0;
+      top: 0;
+    }
+    .menu-ui-${this.uniqueKey}-marker.panel.top {
+      border-bottom: 0.5em solid -moz-dialog;
+    }
+    .menu-ui-${this.uniqueKey}-marker.panel.bottom {
+      border-top: 0.5em solid -moz-dialog;
+    }
+
+    .menu-ui-${this.uniqueKey}-marker.panel.open {
+      opacity: 1;
+    }
+
 
     /* Menu-like appearance */
     .menu-ui-${this.uniqueKey}.menu,
