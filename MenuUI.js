@@ -17,6 +17,7 @@ const MenuUI = function(aParams = {}) {
   this.onBlur            = this.onBlur.bind(this);
   this.onMouseOver       = this.onMouseOver.bind(this);
   this.onMouseDown       = this.onMouseDown.bind(this);
+  this.onMouseUp         = this.onMouseUp.bind(this);
   this.onClick           = this.onClick.bind(this);
   this.onKeyPress        = this.onKeyPress.bind(this);
   this.onTransitionEnd   = this.onTransitionEnd.bind(this);
@@ -80,6 +81,7 @@ MenuUI.prototype = {
       delete this.closeTimeout;
       this.onClosed();
     }
+    this.mouseDownAfterOpen = false;
     this.lastFocusedItem = null;
     this.anchor = aOptions.anchor;
     for (let item of Array.slice(this.root.querySelectorAll('li:not(.separator)'))) {
@@ -110,6 +112,7 @@ MenuUI.prototype = {
       this.root.parentNode.addEventListener('mouseover', this.onMouseOver);
       this.root.addEventListener('transitionend', this.onTransitionEnd);
       window.addEventListener('mousedown', this.onMouseDown, { capture: true });
+      window.addEventListener('mouseup', this.onMouseUp, { capture: true });
       window.addEventListener('click', this.onClick, { capture: true });
       window.addEventListener('keypress', this.onKeyPress, { capture: true });
       window.addEventListener('blur', this.onBlur, { capture: true });
@@ -189,6 +192,7 @@ MenuUI.prototype = {
       this.anchor.classList.remove('open');
       this.marker.classList.remove('open');
     }
+    this.mouseDownAfterOpen = false;
     this.lastFocusedItem = null;
     this.anchor = null;
     return new Promise((aResolve, aReject) => {
@@ -207,6 +211,7 @@ MenuUI.prototype = {
     this.root.parentNode.removeEventListener('mouseover', this.onMouseOver);
     this.root.removeEventListener('transitionend', this.onTransitionEnd);
     window.removeEventListener('mousedown', this.onMouseDown, { capture: true });
+    window.removeEventListener('mouseup', this.onMouseUp, { capture: true });
     window.removeEventListener('click', this.onClick, { capture: true });
     window.removeEventListener('keypress', this.onKeyPress, { capture: true });
     window.removeEventListener('blur', this.onBlur, { capture: true });
@@ -314,6 +319,7 @@ MenuUI.prototype = {
     aEvent.stopImmediatePropagation();
     aEvent.stopPropagation();
     aEvent.preventDefault();
+    this.mouseDownAfterOpen = true;
   },
 
   getEffectiveItem(aNode) {
@@ -327,6 +333,11 @@ MenuUI.prototype = {
         break;
     }
     return target;
+  },
+
+  onMouseUp(aEvent) {
+    if (!this.mouseDownAfterOpen)
+      this.onClick(aEvent);
   },
 
   onClick: async function(aEvent) {
