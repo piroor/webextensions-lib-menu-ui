@@ -25,15 +25,20 @@ const MenuUI = function(aParams = {}) {
   if (!this.root.id)
     this.root.id = `MenuUI-root-${this.uniqueKey}-${parseInt(Math.random() * Math.pow(2, 16))}`;
 
-  this.root.classList.add(`menu-ui-${this.uniqueKey}`);
+  this.commonClass = `menu-ui-${this.uniqueKey}`;
+
+  this.root.classList.add(this.commonClass);
+  this.root.classList.add('menu-ui');
   this.root.classList.add(this.appearance);
 
   this.screen = document.createElement('div');
-  this.screen.classList.add(`menu-ui-${this.uniqueKey}-blocking-screen`);
+  this.screen.classList.add(this.commonClass);
+  this.screen.classList.add('menu-ui-blocking-screen');
   this.root.parentNode.insertBefore(this.screen, this.root.nextSibling);
 
   this.marker = document.createElement('span');
-  this.marker.classList.add(`menu-ui-${this.uniqueKey}-marker`);
+  this.screen.classList.add(this.commonClass);
+  this.marker.classList.add('menu-ui-blocking-marker');
   this.marker.classList.add(this.appearance);
   this.root.parentNode.insertBefore(this.marker, this.root.nextSibling);
 };
@@ -535,8 +540,8 @@ MenuUI.installStyles = function() {
   this.style = document.createElement('style');
   this.style.setAttribute('type', 'text/css');
   this.style.textContent = `
-    .menu-ui-${this.uniqueKey},
-    .menu-ui-${this.uniqueKey} ul {
+    ${this.commonClass}.menu-ui,
+    ${this.commonClass}.menu-ui ul {
       margin: 0;
       max-height: calc(100% - 6px);
       max-width: calc(100% - 6px);
@@ -548,13 +553,13 @@ MenuUI.installStyles = function() {
       z-index: 999999;
     }
 
-    .menu-ui-${this.uniqueKey}.open,
-    .menu-ui-${this.uniqueKey} li.open > ul {
+    ${this.commonClass}.menu-ui.open,
+    ${this.commonClass}.menu-ui li.open > ul {
       opacity: 1;
       pointer-events: auto;
     }
 
-    .menu-ui-${this.uniqueKey} li {
+    ${this.commonClass}.menu-ui li {
       list-style: none;
       margin: 0;
       padding: 0;
@@ -563,14 +568,14 @@ MenuUI.installStyles = function() {
       white-space: nowrap;
     }
 
-    .menu-ui-${this.uniqueKey} li.radio.checked::before,
-    .menu-ui-${this.uniqueKey} li.checkbox.checked::before {
+    ${this.commonClass}.menu-ui li.radio.checked::before,
+    ${this.commonClass}.menu-ui li.checkbox.checked::before {
       content: "✔";
       position: absolute;
       left: 0.25em;
     }
 
-    .menu-ui-${this.uniqueKey} li.separator {
+    ${this.commonClass}.menu-ui li.separator {
       height: 0.5em;
       visibility: hidden;
       margin: 0;
@@ -578,24 +583,24 @@ MenuUI.installStyles = function() {
       pointer-events: none;
     }
 
-    .menu-ui-${this.uniqueKey} li.has-submenu {
+    ${this.commonClass}.menu-ui li.has-submenu {
       padding-right: 1.5em;
     }
-    .menu-ui-${this.uniqueKey} li.has-submenu::after {
+    ${this.commonClass}.menu-ui li.has-submenu::after {
       content: ">";
       position: absolute;
       right: 0.5em;
     }
 
-    .menu-ui-${this.uniqueKey} .accesskey {
+    ${this.commonClass}.menu-ui .accesskey {
       text-decoration: underline;
     }
 
-    .menu-ui-${this.uniqueKey}-blocking-screen {
+    ${this.commonClass}.menu-ui-blocking-screen {
       display: none;
     }
 
-    .menu-ui-${this.uniqueKey}-blocking-screen.open {
+    ${this.commonClass}.menu-ui-blocking-screen.open {
       bottom: 0;
       display: block;
       left: 0;
@@ -605,17 +610,17 @@ MenuUI.installStyles = function() {
       z-index: 899999;
     }
 
-    .menu-ui-${this.uniqueKey}.menu li:not(.separator):focus,
-    .menu-ui-${this.uniqueKey}.menu li:not(.separator).open {
+    ${this.commonClass}.menu-ui.menu li:not(.separator):focus,
+    ${this.commonClass}.menu-ui.menu li:not(.separator).open {
       outline: none;
     }
 
-    .menu-ui-${this.uniqueKey}.panel li:not(.separator):focus ul li:not(:focus):not(.open),
-    .menu-ui-${this.uniqueKey}.panel li:not(.separator).open ul li:not(:focus):not(.open) {
+    ${this.commonClass}.menu-ui.panel li:not(.separator):focus ul li:not(:focus):not(.open),
+    ${this.commonClass}.menu-ui.panel li:not(.separator).open ul li:not(:focus):not(.open) {
       background: transparent;
     }
 
-    .menu-ui-${this.uniqueKey}-marker {
+    ${this.commonClass}.menu-ui-marker {
       display: none;
       opacity: 0;
       pointer-events: none;
@@ -624,8 +629,8 @@ MenuUI.installStyles = function() {
     }
 
     /* panel-like appearance */
-    .menu-ui-${this.uniqueKey}.panel,
-    .menu-ui-${this.uniqueKey}.panel ul {
+    ${this.commonClass}.menu-ui.panel,
+    ${this.commonClass}.menu-ui.panel ul {
       background: -moz-dialog;
       border-radius: 0.5em;
       box-shadow: 0.1em 0.1em 0.8em rgba(0, 0, 0, 0.65);
@@ -633,22 +638,22 @@ MenuUI.installStyles = function() {
       padding: 0.5em 0;
     }
 
-    .menu-ui-${this.uniqueKey}.panel li {
+    ${this.commonClass}.menu-ui.panel li {
       padding: 0.15em 1em;
     }
 
-    .menu-ui-${this.uniqueKey}.panel li:not(.separator):focus,
-    .menu-ui-${this.uniqueKey}.panel li:not(.separator).open {
+    ${this.commonClass}.menu-ui.panel li:not(.separator):focus,
+    ${this.commonClass}.menu-ui.panel li:not(.separator).open {
       background: Highlight;
       color: HighlightText;
     }
 
-    .menu-ui-${this.uniqueKey}.panel li:not(.separator):focus ul li:not(:focus):not(.open),
-    .menu-ui-${this.uniqueKey}.panel li:not(.separator).open ul li:not(:focus):not(.open) {
+    ${this.commonClass}.menu-ui.panel li:not(.separator):focus ul li:not(:focus):not(.open),
+    ${this.commonClass}.menu-ui.panel li:not(.separator).open ul li:not(:focus):not(.open) {
       color: -moz-dialogtext;
     }
 
-    .menu-ui-${this.uniqueKey}-marker.panel {
+    ${this.commonClass}.menu-ui-marker.panel {
       border: 0.5em solid transparent;
       content: "";
       display: block;
@@ -657,21 +662,21 @@ MenuUI.installStyles = function() {
       width: 0;
       top: 0;
     }
-    .menu-ui-${this.uniqueKey}-marker.panel.top {
+    ${this.commonClass}.menu-ui-marker.panel.top {
       border-bottom: 0.5em solid -moz-dialog;
     }
-    .menu-ui-${this.uniqueKey}-marker.panel.bottom {
+    ${this.commonClass}.menu-ui-marker.panel.bottom {
       border-top: 0.5em solid -moz-dialog;
     }
 
-    .menu-ui-${this.uniqueKey}-marker.panel.open {
+    ${this.commonClass}.menu-ui-marker.panel.open {
       opacity: 1;
     }
 
 
     /* Menu-like appearance */
-    .menu-ui-${this.uniqueKey}.menu,
-    .menu-ui-${this.uniqueKey}.menu ul {
+    ${this.commonClass}.menu-ui.menu,
+    ${this.commonClass}.menu-ui.menu ul {
       background: Menu;
       border: 1px outset Menu;
       box-shadow: 0.1em 0.1em 0.5em rgba(0, 0, 0, 0.65);
@@ -679,11 +684,11 @@ MenuUI.installStyles = function() {
       font: -moz-pull-down-menu;
     }
 
-    .menu-ui-${this.uniqueKey}.menu li {
+    ${this.commonClass}.menu-ui.menu li {
       padding: 0.15em 0.5em 0.15em 1.5em;
     }
 
-    .menu-ui-${this.uniqueKey}.menu li.separator {
+    ${this.commonClass}.menu-ui.menu li.separator {
       border: 1px inset Menu;
       height: 0;
       margin: 0 0.5em;
@@ -693,14 +698,14 @@ MenuUI.installStyles = function() {
       visibility: visible;
     }
 
-    .menu-ui-${this.uniqueKey}.menu li:not(.separator):focus,
-    .menu-ui-${this.uniqueKey}.menu li:not(.separator).open {
+    ${this.commonClass}.menu-ui.menu li:not(.separator):focus,
+    ${this.commonClass}.menu-ui.menu li:not(.separator).open {
       background: Highlight;
       color: HighlightText;
     }
 
-    .menu-ui-${this.uniqueKey}.menu li:not(.separator):focus ul li:not(:focus):not(.open),
-    .menu-ui-${this.uniqueKey}.menu li:not(.separator).open ul li:not(:focus):not(.open) {
+    ${this.commonClass}.menu-ui.menu li:not(.separator):focus ul li:not(:focus):not(.open),
+    ${this.commonClass}.menu-ui.menu li:not(.separator).open ul li:not(:focus):not(.open) {
       color: MenuText;
     }
   `;
