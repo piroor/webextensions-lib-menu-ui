@@ -35,8 +35,8 @@ const MenuUI = function(aParams = {}) {
   this.root.parentNode.insertBefore(this.screen, this.root.nextSibling);
 
   this.marker = document.createElement('span');
-  this.screen.classList.add(this.commonClass);
-  this.marker.classList.add('menu-ui-blocking-marker');
+  this.marker.classList.add(this.commonClass);
+  this.marker.classList.add('menu-ui-marker');
   this.marker.classList.add(this.appearance);
   this.root.parentNode.insertBefore(this.marker, this.root.nextSibling);
 };
@@ -539,9 +539,10 @@ MenuUI.prototype = {
 MenuUI.installStyles = function() {
   this.style = document.createElement('style');
   this.style.setAttribute('type', 'text/css');
+  const common = `.${this.commonClass}`;
   this.style.textContent = `
-    ${this.commonClass}.menu-ui,
-    ${this.commonClass}.menu-ui ul {
+    ${common}.menu-ui,
+    ${common}.menu-ui ul {
       margin: 0;
       max-height: calc(100% - 6px);
       max-width: calc(100% - 6px);
@@ -553,13 +554,13 @@ MenuUI.installStyles = function() {
       z-index: 999999;
     }
 
-    ${this.commonClass}.menu-ui.open,
-    ${this.commonClass}.menu-ui li.open > ul {
+    ${common}.menu-ui.open,
+    ${common}.menu-ui li.open > ul {
       opacity: 1;
       pointer-events: auto;
     }
 
-    ${this.commonClass}.menu-ui li {
+    ${common}.menu-ui li {
       list-style: none;
       margin: 0;
       padding: 0;
@@ -568,14 +569,14 @@ MenuUI.installStyles = function() {
       white-space: nowrap;
     }
 
-    ${this.commonClass}.menu-ui li.radio.checked::before,
-    ${this.commonClass}.menu-ui li.checkbox.checked::before {
+    ${common}.menu-ui li.radio.checked::before,
+    ${common}.menu-ui li.checkbox.checked::before {
       content: "✔";
       position: absolute;
       left: 0.25em;
     }
 
-    ${this.commonClass}.menu-ui li.separator {
+    ${common}.menu-ui li.separator {
       height: 0.5em;
       visibility: hidden;
       margin: 0;
@@ -583,24 +584,24 @@ MenuUI.installStyles = function() {
       pointer-events: none;
     }
 
-    ${this.commonClass}.menu-ui li.has-submenu {
+    ${common}.menu-ui li.has-submenu {
       padding-right: 1.5em;
     }
-    ${this.commonClass}.menu-ui li.has-submenu::after {
+    ${common}.menu-ui li.has-submenu::after {
       content: ">";
       position: absolute;
       right: 0.5em;
     }
 
-    ${this.commonClass}.menu-ui .accesskey {
+    ${common}.menu-ui .accesskey {
       text-decoration: underline;
     }
 
-    ${this.commonClass}.menu-ui-blocking-screen {
+    ${common}.menu-ui-blocking-screen {
       display: none;
     }
 
-    ${this.commonClass}.menu-ui-blocking-screen.open {
+    ${common}.menu-ui-blocking-screen.open {
       bottom: 0;
       display: block;
       left: 0;
@@ -610,17 +611,17 @@ MenuUI.installStyles = function() {
       z-index: 899999;
     }
 
-    ${this.commonClass}.menu-ui.menu li:not(.separator):focus,
-    ${this.commonClass}.menu-ui.menu li:not(.separator).open {
+    ${common}.menu-ui.menu li:not(.separator):focus,
+    ${common}.menu-ui.menu li:not(.separator).open {
       outline: none;
     }
 
-    ${this.commonClass}.menu-ui.panel li:not(.separator):focus ul li:not(:focus):not(.open),
-    ${this.commonClass}.menu-ui.panel li:not(.separator).open ul li:not(:focus):not(.open) {
+    ${common}.menu-ui.panel li:not(.separator):focus ul li:not(:focus):not(.open),
+    ${common}.menu-ui.panel li:not(.separator).open ul li:not(:focus):not(.open) {
       background: transparent;
     }
 
-    ${this.commonClass}.menu-ui-marker {
+    ${common}.menu-ui-marker {
       display: none;
       opacity: 0;
       pointer-events: none;
@@ -629,8 +630,8 @@ MenuUI.installStyles = function() {
     }
 
     /* panel-like appearance */
-    ${this.commonClass}.menu-ui.panel,
-    ${this.commonClass}.menu-ui.panel ul {
+    ${common}.menu-ui.panel,
+    ${common}.menu-ui.panel ul {
       background: -moz-dialog;
       border-radius: 0.5em;
       box-shadow: 0.1em 0.1em 0.8em rgba(0, 0, 0, 0.65);
@@ -638,22 +639,22 @@ MenuUI.installStyles = function() {
       padding: 0.5em 0;
     }
 
-    ${this.commonClass}.menu-ui.panel li {
+    ${common}.menu-ui.panel li {
       padding: 0.15em 1em;
     }
 
-    ${this.commonClass}.menu-ui.panel li:not(.separator):focus,
-    ${this.commonClass}.menu-ui.panel li:not(.separator).open {
+    ${common}.menu-ui.panel li:not(.separator):focus,
+    ${common}.menu-ui.panel li:not(.separator).open {
       background: Highlight;
       color: HighlightText;
     }
 
-    ${this.commonClass}.menu-ui.panel li:not(.separator):focus ul li:not(:focus):not(.open),
-    ${this.commonClass}.menu-ui.panel li:not(.separator).open ul li:not(:focus):not(.open) {
+    ${common}.menu-ui.panel li:not(.separator):focus ul li:not(:focus):not(.open),
+    ${common}.menu-ui.panel li:not(.separator).open ul li:not(:focus):not(.open) {
       color: -moz-dialogtext;
     }
 
-    ${this.commonClass}.menu-ui-marker.panel {
+    ${common}.menu-ui-marker.panel {
       border: 0.5em solid transparent;
       content: "";
       display: block;
@@ -662,21 +663,21 @@ MenuUI.installStyles = function() {
       width: 0;
       top: 0;
     }
-    ${this.commonClass}.menu-ui-marker.panel.top {
+    ${common}.menu-ui-marker.panel.top {
       border-bottom: 0.5em solid -moz-dialog;
     }
-    ${this.commonClass}.menu-ui-marker.panel.bottom {
+    ${common}.menu-ui-marker.panel.bottom {
       border-top: 0.5em solid -moz-dialog;
     }
 
-    ${this.commonClass}.menu-ui-marker.panel.open {
+    ${common}.menu-ui-marker.panel.open {
       opacity: 1;
     }
 
 
     /* Menu-like appearance */
-    ${this.commonClass}.menu-ui.menu,
-    ${this.commonClass}.menu-ui.menu ul {
+    ${common}.menu-ui.menu,
+    ${common}.menu-ui.menu ul {
       background: Menu;
       border: 1px outset Menu;
       box-shadow: 0.1em 0.1em 0.5em rgba(0, 0, 0, 0.65);
@@ -684,11 +685,11 @@ MenuUI.installStyles = function() {
       font: -moz-pull-down-menu;
     }
 
-    ${this.commonClass}.menu-ui.menu li {
+    ${common}.menu-ui.menu li {
       padding: 0.15em 0.5em 0.15em 1.5em;
     }
 
-    ${this.commonClass}.menu-ui.menu li.separator {
+    ${common}.menu-ui.menu li.separator {
       border: 1px inset Menu;
       height: 0;
       margin: 0 0.5em;
@@ -698,14 +699,14 @@ MenuUI.installStyles = function() {
       visibility: visible;
     }
 
-    ${this.commonClass}.menu-ui.menu li:not(.separator):focus,
-    ${this.commonClass}.menu-ui.menu li:not(.separator).open {
+    ${common}.menu-ui.menu li:not(.separator):focus,
+    ${common}.menu-ui.menu li:not(.separator).open {
       background: Highlight;
       color: HighlightText;
     }
 
-    ${this.commonClass}.menu-ui.menu li:not(.separator):focus ul li:not(:focus):not(.open),
-    ${this.commonClass}.menu-ui.menu li:not(.separator).open ul li:not(:focus):not(.open) {
+    ${common}.menu-ui.menu li:not(.separator):focus ul li:not(:focus):not(.open),
+    ${common}.menu-ui.menu li:not(.separator).open ul li:not(:focus):not(.open) {
       color: MenuText;
     }
   `;
