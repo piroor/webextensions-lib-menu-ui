@@ -9,7 +9,7 @@
 const MenuUI = function(aParams = {}) {
   this.root              = aParams.root;
   this.onCommand         = aParams.onCommand || (() => {});
-  this.animationDuration = aParams.animationDuration || 0;
+  this.animationDuration = aParams.animationDuration || 150;
   this.subMenuOpenDelay  = aParams.subMenuOpenDelay || 300;
   this.subMenuCloseDelay = aParams.subMenuCloseDelay || 300;
   this.appearance        = aParams.appearance || 'menu';
