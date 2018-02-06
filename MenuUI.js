@@ -88,6 +88,10 @@ MenuUI.prototype = {
     this.root.classList.add('open');
     const menus = [this.root].concat(Array.slice(this.root.querySelectorAll('ul')));
     for (let menu of menus) {
+      if (this.animationDuration)
+        menu.style.transition = `opacity ${this.animationDuration}ms ease-out`;
+      else
+        menu.style.transition = '';
       this.updatePosition(menu, aOptions);
     }
     setTimeout(() => {
@@ -478,7 +482,6 @@ MenuUI.installStyles = function() {
       padding: 0;
       pointer-events: none;
       position: fixed;
-      transition: opacity ${this.animationDuration}ms ease-out;
       z-index: 999999;
     }
 
