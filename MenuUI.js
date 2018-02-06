@@ -543,7 +543,7 @@ MenuUI.prototype = {
 window.MenuUI = MenuUI;
 
 // XPath Utilities
-const hasClass => (aClassName) => {
+const hasClass = (aClassName) => {
   return `contains(concat(" ", normalize-space(@class), " "), " ${aClassName} ")`;
 };
 
