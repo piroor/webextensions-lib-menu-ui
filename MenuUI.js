@@ -12,6 +12,7 @@ const MenuUI = function(aParams = {}) {
   this.animationDuration = aParams.animationDuration || 0;
   this.subMenuOpenDelay  = aParams.subMenuOpenDelay || 300;
   this.subMenuCloseDelay = aParams.subMenuCloseDelay || 300;
+  this.appearance        = aParams.appearance || 'menu';
 
   this.onBlur            = this.onBlur.bind(this);
   this.onMouseOver       = this.onMouseOver.bind(this);
@@ -22,6 +23,7 @@ const MenuUI = function(aParams = {}) {
 
   this.installStyles();
   this.root.classList.add(`menu-ui-${this.uniqueKey}`);
+  this.root.classList.add(this.appearance);
 
   this.screen = document.createElement('div');
   this.screen.classList.add(`menu-ui-${this.uniqueKey}-blocking-screen`);
@@ -39,11 +41,6 @@ MenuUI.prototype = {
     this.style.textContent = `
       .menu-ui-${this.uniqueKey},
       .menu-ui-${this.uniqueKey} ul {
-        background: Menu;
-        border: 1px outset Menu;
-        box-shadow: 0.1em 0.1em 0.5em rgba(0, 0, 0, 0.65);
-        color: MenuText;
-        font: -moz-pull-down-menu;
         margin: 0;
         max-height: calc(100% - 6px);
         max-width: calc(100% - 6px);
@@ -65,7 +62,7 @@ MenuUI.prototype = {
       .menu-ui-${this.uniqueKey} li {
         list-style: none;
         margin: 0;
-        padding: 0.15em 0.5em 0.15em 1.5em;
+        padding: 0;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -79,25 +76,11 @@ MenuUI.prototype = {
       }
 
       .menu-ui-${this.uniqueKey} li.separator {
-        border: 1px inset Menu;
-        margin: 0 0.5em;
-        max-height: 0;
-        opacity: 0.5;
+        height: 0.5em;
+        visibility: hidden;
+        margin: 0;
         padding: 0;
         pointer-events: none;
-      }
-
-      .menu-ui-${this.uniqueKey} li:not(.separator):focus,
-      .menu-ui-${this.uniqueKey} li:not(.separator).open {
-        background: Highlight;
-        color: HighlightText;
-        outline: none;
-      }
-
-      .menu-ui-${this.uniqueKey} li:not(.separator):focus ul li:not(:focus):not(.open),
-      .menu-ui-${this.uniqueKey} li:not(.separator).open ul li:not(:focus):not(.open) {
-        background: transparent;
-        color: MenuText;
       }
 
       .menu-ui-${this.uniqueKey} li.has-submenu {
@@ -125,6 +108,42 @@ MenuUI.prototype = {
         right: 0;
         top: 0;
         z-index: 899999;
+      }
+
+      /* Menu-like appearance */
+      .menu-ui-${this.uniqueKey}.menu,
+      .menu-ui-${this.uniqueKey}.menu ul {
+        background: Menu;
+        border: 1px outset Menu;
+        box-shadow: 0.1em 0.1em 0.5em rgba(0, 0, 0, 0.65);
+        color: MenuText;
+        font: -moz-pull-down-menu;
+      }
+
+      .menu-ui-${this.uniqueKey}.menu li {
+        padding: 0.15em 0.5em 0.15em 1.5em;
+      }
+
+      .menu-ui-${this.uniqueKey}.menu li.separator {
+        border: 1px inset Menu;
+        height: 0;
+        margin: 0 0.5em;
+        max-height: 0;
+        opacity: 0.5;
+        visibility: visible;
+      }
+
+      .menu-ui-${this.uniqueKey}.menu li:not(.separator):focus,
+      .menu-ui-${this.uniqueKey}.menu li:not(.separator).open {
+        background: Highlight;
+        color: HighlightText;
+        outline: none;
+      }
+
+      .menu-ui-${this.uniqueKey}.menu li:not(.separator):focus ul li:not(:focus):not(.open),
+      .menu-ui-${this.uniqueKey}.menu li:not(.separator).open ul li:not(:focus):not(.open) {
+        background: transparent;
+        color: MenuText;
       }
     `;
     document.head.appendChild(this.style);
