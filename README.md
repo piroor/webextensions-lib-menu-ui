@@ -118,7 +118,7 @@ Calling an instance method `close()` will close the opened menu. This method wil
 A function specified via the `onCommand` parameter for the constructor will be called when a menu item without submenu is triggered. The function will receive the triggered menu item as its first argument. The second argument is the raw DOM event. Then you can do anything for the item.
 
 ```javascript
-var menuUI = await MenuUI.show({
+var menuUI = new MenuUI({
   root:      document.getElementById('menu'),
   onCommand: (aItem, aEvent) => {
     switch (aItem.id) {
