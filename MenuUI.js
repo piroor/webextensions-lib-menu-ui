@@ -86,6 +86,7 @@ MenuUI.prototype = {
         item.classList.remove('has-submenu');
     }
     this.root.classList.add('open');
+    this.screen.classList.add('open');
     const menus = [this.root].concat(Array.slice(this.root.querySelectorAll('ul')));
     for (let menu of menus) {
       if (this.animationDuration)
@@ -129,6 +130,7 @@ MenuUI.prototype = {
     if (!this.root.classList.contains('open'))
       return;
     this.root.classList.remove('open');
+    this.screen.classList.remove('open');
     this.lastFocusedItem = null;
     return new Promise((aResolve, aReject) => {
       this.closeTimeout = setTimeout(() => {
@@ -532,7 +534,7 @@ MenuUI.installStyles = function() {
       display: none;
     }
 
-    .menu-ui-${this.uniqueKey}.open + .menu-ui-${this.uniqueKey}-blocking-screen {
+    .menu-ui-${this.uniqueKey}-blocking-screen.open {
       bottom: 0;
       display: block;
       left: 0;
