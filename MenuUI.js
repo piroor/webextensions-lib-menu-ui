@@ -25,8 +25,6 @@ const MenuUI = function(aParams = {}) {
   if (!this.root.id)
     this.root.id = `MenuUI-root-${this.uniqueKey}-${parseInt(Math.random() * Math.pow(2, 16))}`;
 
-  this.commonClass = `menu-ui-${this.uniqueKey}`;
-
   this.root.classList.add(this.commonClass);
   this.root.classList.add('menu-ui');
   this.root.classList.add(this.appearance);
@@ -44,9 +42,11 @@ const MenuUI = function(aParams = {}) {
 };
 
 MenuUI.uniqueKey = parseInt(Math.random() * Math.pow(2, 16));
+MenuUI.commonClass = `menu-ui-${MenuUI.uniqueKey}`;
 
 MenuUI.prototype = {
   uniqueKey: MenuUI.uniqueKey,
+  commonClass: MenuUI.commonClass,
 
   lastFocusedItem: null,
 
