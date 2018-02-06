@@ -22,6 +22,9 @@ const MenuUI = function(aParams = {}) {
   this.onKeyPress        = this.onKeyPress.bind(this);
   this.onTransitionEnd   = this.onTransitionEnd.bind(this);
 
+  if (!this.root.id)
+    this.root.id = `MenuUI-root-${this.uniqueKey}-${parseInt(Math.random() * Math.pow(2, 16))}`;
+
   this.root.classList.add(`menu-ui-${this.uniqueKey}`);
   this.root.classList.add(this.appearance);
 
