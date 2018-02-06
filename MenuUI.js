@@ -221,21 +221,16 @@ MenuUI.prototype = {
   },
 
   get containerRect() {
-    var allRange = document.createRange();
-    allRange.selectNodeContents(document.body);
-    var containerRect = allRange.getBoundingClientRect();
-    allRange.detach();
-    // because the contianer box can be shifted to hide scrollbar
-    var dummyTabsRect = document.querySelector('#dummy-tabs').getBoundingClientRect();
+    var x      = 0;
+    var y      = 0;
+    var width  = window.innerWidth;
+    var height = window.innerHeight;
     return {
-      x:      dummyTabsRect.x,
-      y:      containerRect.y,
-      width:  dummyTabsRect.width,
-      height: containerRect.height,
-      top:    containerRect.top,
-      right:  dummyTabsRect.right,
-      bottom: containerRect.bottom,
-      left:   dummyTabsRect.left
+      x, y, width, height,
+      left:   x,
+      top:    y,
+      right:  width,
+      bottom: height
     };
   },
 
