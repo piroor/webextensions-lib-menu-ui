@@ -680,6 +680,7 @@ MenuUI.installStyles = function() {
       margin: 0 0.5em;
       max-height: 0;
       opacity: 0.5;
+      padding: 0;
       visibility: visible;
     }
 
