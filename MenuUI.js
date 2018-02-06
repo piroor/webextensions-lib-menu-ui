@@ -110,6 +110,41 @@ MenuUI.prototype = {
         z-index: 899999;
       }
 
+      .menu-ui-${this.uniqueKey}.menu li:not(.separator):focus,
+      .menu-ui-${this.uniqueKey}.menu li:not(.separator).open {
+        outline: none;
+      }
+
+      .menu-ui-${this.uniqueKey}.panel li:not(.separator):focus ul li:not(:focus):not(.open),
+      .menu-ui-${this.uniqueKey}.panel li:not(.separator).open ul li:not(:focus):not(.open) {
+        background: transparent;
+      }
+
+      /* panel-like appearance */
+      .menu-ui-${this.uniqueKey}.panel,
+      .menu-ui-${this.uniqueKey}.panel ul {
+        background: -moz-dialog;
+        border-radius: 0.5em;
+        box-shadow: 0.1em 0.1em 0.5em rgba(0, 0, 0, 0.65);
+        color: -moz-dialogtext;
+        padding: 0.5em 0;
+      }
+
+      .menu-ui-${this.uniqueKey}.panel li {
+        padding: 0.15em 1em;
+      }
+
+      .menu-ui-${this.uniqueKey}.panel li:not(.separator):focus,
+      .menu-ui-${this.uniqueKey}.panel li:not(.separator).open {
+        background: Highlight;
+        color: HighlightText;
+      }
+
+      .menu-ui-${this.uniqueKey}.panel li:not(.separator):focus ul li:not(:focus):not(.open),
+      .menu-ui-${this.uniqueKey}.panel li:not(.separator).open ul li:not(:focus):not(.open) {
+        color: -moz-dialogtext;
+      }
+
       /* Menu-like appearance */
       .menu-ui-${this.uniqueKey}.menu,
       .menu-ui-${this.uniqueKey}.menu ul {
@@ -137,12 +172,10 @@ MenuUI.prototype = {
       .menu-ui-${this.uniqueKey}.menu li:not(.separator).open {
         background: Highlight;
         color: HighlightText;
-        outline: none;
       }
 
       .menu-ui-${this.uniqueKey}.menu li:not(.separator):focus ul li:not(:focus):not(.open),
       .menu-ui-${this.uniqueKey}.menu li:not(.separator).open ul li:not(:focus):not(.open) {
-        background: transparent;
         color: MenuText;
       }
     `;
