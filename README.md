@@ -4,6 +4,12 @@ Helps to provide menu like UI.
 
 The menu will behave similar to a native menu UI for major operations via the pointing device and the keyboard).
 
+## Screenshots
+
+![(Screenshot of menu-like UI)](screenshots/menu.png)
+
+![(Screenshot of panel-like UI)](screenshots/panel.png)
+
 ## Usage
 
 Load the file `MenuUI.js` from any visible document (sidebar panel or browser action panel), like:
@@ -66,8 +72,8 @@ Here is the list of parameters for the `MenuUI` constructor:
  * `root` (required): The top-level list to become a menu. (`Element`)
  * `onCommand` (required): The handler for click event on a menu item. (`Function`)
  * `appearance` (optional): The visual style of the menu. (`String`, default is `menu`.) Possible values:
-   - `menu`: similar to native menu UI. ![Screenshot of menu-like UI](screenshots/menu.png)
-   - `panel`: similar to popup panel UI. ![Screenshot of panel-like UI](screenshots/panel.png)
+   - `menu`: similar to native menu UI.
+   - `panel`: similar to popup panel UI.
  * `animationDuration` (optional): The duration of the animation of fade-in-out effect, in milliseconds. (`Integer`, default value is `150`.)
  * `subMenuOpenDelay` (optional): The delay when a submenu is opened after its parent item is pointed, in milliseconds. (`Integer`, default value is `300`.)
  * `subMenuCloseDelay` (optional): The delay when a submenu is closed after foreign item is pointed, in milliseconds. (`Integer`, default value is `300`.)
