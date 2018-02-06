@@ -21,7 +21,6 @@ const MenuUI = function(aParams = {}) {
   this.onKeyPress        = this.onKeyPress.bind(this);
   this.onTransitionEnd   = this.onTransitionEnd.bind(this);
 
-  this.installStyles();
   this.root.classList.add(`menu-ui-${this.uniqueKey}`);
   this.root.classList.add(this.appearance);
 
@@ -30,157 +29,12 @@ const MenuUI = function(aParams = {}) {
   this.root.parentNode.appendChild(this.screen);
 };
 
+MenuUI.uniqueKey = parseInt(Math.random() * Math.pow(2, 16));
+
 MenuUI.prototype = {
-  uniqueKey: parseInt(Math.random() * Math.pow(2, 16)),
+  uniqueKey: MenuUI.uniqueKey,
 
   lastFocusedItem: null,
-
-  installStyles() {
-    this.style = document.createElement('style');
-    this.style.setAttribute('type', 'text/css');
-    this.style.textContent = `
-      .menu-ui-${this.uniqueKey},
-      .menu-ui-${this.uniqueKey} ul {
-        margin: 0;
-        max-height: calc(100% - 6px);
-        max-width: calc(100% - 6px);
-        opacity: 0;
-        overflow: auto;
-        padding: 0;
-        pointer-events: none;
-        position: fixed;
-        transition: opacity ${this.animationDuration}ms ease-out;
-        z-index: 999999;
-      }
-
-      .menu-ui-${this.uniqueKey}.open,
-      .menu-ui-${this.uniqueKey} li.open > ul {
-        opacity: 1;
-        pointer-events: auto;
-      }
-
-      .menu-ui-${this.uniqueKey} li {
-        list-style: none;
-        margin: 0;
-        padding: 0;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-      }
-
-      .menu-ui-${this.uniqueKey} li.radio.checked::before,
-      .menu-ui-${this.uniqueKey} li.checkbox.checked::before {
-        content: "✔";
-        position: absolute;
-        left: 0.25em;
-      }
-
-      .menu-ui-${this.uniqueKey} li.separator {
-        height: 0.5em;
-        visibility: hidden;
-        margin: 0;
-        padding: 0;
-        pointer-events: none;
-      }
-
-      .menu-ui-${this.uniqueKey} li.has-submenu {
-        padding-right: 1.5em;
-      }
-      .menu-ui-${this.uniqueKey} li.has-submenu::after {
-        content: ">";
-        position: absolute;
-        right: 0.5em;
-      }
-
-      .menu-ui-${this.uniqueKey} .accesskey {
-        text-decoration: underline;
-      }
-
-      .menu-ui-${this.uniqueKey}-blocking-screen {
-        display: none;
-      }
-
-      .menu-ui-${this.uniqueKey}.open + .menu-ui-${this.uniqueKey}-blocking-screen {
-        bottom: 0;
-        display: block;
-        left: 0;
-        position: fixed;
-        right: 0;
-        top: 0;
-        z-index: 899999;
-      }
-
-      .menu-ui-${this.uniqueKey}.menu li:not(.separator):focus,
-      .menu-ui-${this.uniqueKey}.menu li:not(.separator).open {
-        outline: none;
-      }
-
-      .menu-ui-${this.uniqueKey}.panel li:not(.separator):focus ul li:not(:focus):not(.open),
-      .menu-ui-${this.uniqueKey}.panel li:not(.separator).open ul li:not(:focus):not(.open) {
-        background: transparent;
-      }
-
-      /* panel-like appearance */
-      .menu-ui-${this.uniqueKey}.panel,
-      .menu-ui-${this.uniqueKey}.panel ul {
-        background: -moz-dialog;
-        border-radius: 0.5em;
-        box-shadow: 0.1em 0.1em 0.5em rgba(0, 0, 0, 0.65);
-        color: -moz-dialogtext;
-        padding: 0.5em 0;
-      }
-
-      .menu-ui-${this.uniqueKey}.panel li {
-        padding: 0.15em 1em;
-      }
-
-      .menu-ui-${this.uniqueKey}.panel li:not(.separator):focus,
-      .menu-ui-${this.uniqueKey}.panel li:not(.separator).open {
-        background: Highlight;
-        color: HighlightText;
-      }
-
-      .menu-ui-${this.uniqueKey}.panel li:not(.separator):focus ul li:not(:focus):not(.open),
-      .menu-ui-${this.uniqueKey}.panel li:not(.separator).open ul li:not(:focus):not(.open) {
-        color: -moz-dialogtext;
-      }
-
-      /* Menu-like appearance */
-      .menu-ui-${this.uniqueKey}.menu,
-      .menu-ui-${this.uniqueKey}.menu ul {
-        background: Menu;
-        border: 1px outset Menu;
-        box-shadow: 0.1em 0.1em 0.5em rgba(0, 0, 0, 0.65);
-        color: MenuText;
-        font: -moz-pull-down-menu;
-      }
-
-      .menu-ui-${this.uniqueKey}.menu li {
-        padding: 0.15em 0.5em 0.15em 1.5em;
-      }
-
-      .menu-ui-${this.uniqueKey}.menu li.separator {
-        border: 1px inset Menu;
-        height: 0;
-        margin: 0 0.5em;
-        max-height: 0;
-        opacity: 0.5;
-        visibility: visible;
-      }
-
-      .menu-ui-${this.uniqueKey}.menu li:not(.separator):focus,
-      .menu-ui-${this.uniqueKey}.menu li:not(.separator).open {
-        background: Highlight;
-        color: HighlightText;
-      }
-
-      .menu-ui-${this.uniqueKey}.menu li:not(.separator):focus ul li:not(:focus):not(.open),
-      .menu-ui-${this.uniqueKey}.menu li:not(.separator).open ul li:not(:focus):not(.open) {
-        color: MenuText;
-      }
-    `;
-    document.head.appendChild(this.style);
-  },
 
   updateAccessKey(aItem) {
     const ACCESS_KEY_MATCHER = /(&([a-z]))/i;
@@ -609,6 +463,155 @@ MenuUI.prototype = {
     this.lastFocusedItem = item;
   }
 };
+
+MenuUI.installStyles = function() {
+  this.style = document.createElement('style');
+  this.style.setAttribute('type', 'text/css');
+  this.style.textContent = `
+    .menu-ui-${this.uniqueKey},
+    .menu-ui-${this.uniqueKey} ul {
+      margin: 0;
+      max-height: calc(100% - 6px);
+      max-width: calc(100% - 6px);
+      opacity: 0;
+      overflow: auto;
+      padding: 0;
+      pointer-events: none;
+      position: fixed;
+      transition: opacity ${this.animationDuration}ms ease-out;
+      z-index: 999999;
+    }
+
+    .menu-ui-${this.uniqueKey}.open,
+    .menu-ui-${this.uniqueKey} li.open > ul {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .menu-ui-${this.uniqueKey} li {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .menu-ui-${this.uniqueKey} li.radio.checked::before,
+    .menu-ui-${this.uniqueKey} li.checkbox.checked::before {
+      content: "✔";
+      position: absolute;
+      left: 0.25em;
+    }
+
+    .menu-ui-${this.uniqueKey} li.separator {
+      height: 0.5em;
+      visibility: hidden;
+      margin: 0;
+      padding: 0;
+      pointer-events: none;
+    }
+
+    .menu-ui-${this.uniqueKey} li.has-submenu {
+      padding-right: 1.5em;
+    }
+    .menu-ui-${this.uniqueKey} li.has-submenu::after {
+      content: ">";
+      position: absolute;
+      right: 0.5em;
+    }
+
+    .menu-ui-${this.uniqueKey} .accesskey {
+      text-decoration: underline;
+    }
+
+    .menu-ui-${this.uniqueKey}-blocking-screen {
+      display: none;
+    }
+
+    .menu-ui-${this.uniqueKey}.open + .menu-ui-${this.uniqueKey}-blocking-screen {
+      bottom: 0;
+      display: block;
+      left: 0;
+      position: fixed;
+      right: 0;
+      top: 0;
+      z-index: 899999;
+    }
+
+    .menu-ui-${this.uniqueKey}.menu li:not(.separator):focus,
+    .menu-ui-${this.uniqueKey}.menu li:not(.separator).open {
+      outline: none;
+    }
+
+    .menu-ui-${this.uniqueKey}.panel li:not(.separator):focus ul li:not(:focus):not(.open),
+    .menu-ui-${this.uniqueKey}.panel li:not(.separator).open ul li:not(:focus):not(.open) {
+      background: transparent;
+    }
+
+    /* panel-like appearance */
+    .menu-ui-${this.uniqueKey}.panel,
+    .menu-ui-${this.uniqueKey}.panel ul {
+      background: -moz-dialog;
+      border-radius: 0.5em;
+      box-shadow: 0.1em 0.1em 0.5em rgba(0, 0, 0, 0.65);
+      color: -moz-dialogtext;
+      padding: 0.5em 0;
+    }
+
+    .menu-ui-${this.uniqueKey}.panel li {
+      padding: 0.15em 1em;
+    }
+
+    .menu-ui-${this.uniqueKey}.panel li:not(.separator):focus,
+    .menu-ui-${this.uniqueKey}.panel li:not(.separator).open {
+      background: Highlight;
+      color: HighlightText;
+    }
+
+    .menu-ui-${this.uniqueKey}.panel li:not(.separator):focus ul li:not(:focus):not(.open),
+    .menu-ui-${this.uniqueKey}.panel li:not(.separator).open ul li:not(:focus):not(.open) {
+      color: -moz-dialogtext;
+    }
+
+    /* Menu-like appearance */
+    .menu-ui-${this.uniqueKey}.menu,
+    .menu-ui-${this.uniqueKey}.menu ul {
+      background: Menu;
+      border: 1px outset Menu;
+      box-shadow: 0.1em 0.1em 0.5em rgba(0, 0, 0, 0.65);
+      color: MenuText;
+      font: -moz-pull-down-menu;
+    }
+
+    .menu-ui-${this.uniqueKey}.menu li {
+      padding: 0.15em 0.5em 0.15em 1.5em;
+    }
+
+    .menu-ui-${this.uniqueKey}.menu li.separator {
+      border: 1px inset Menu;
+      height: 0;
+      margin: 0 0.5em;
+      max-height: 0;
+      opacity: 0.5;
+      visibility: visible;
+    }
+
+    .menu-ui-${this.uniqueKey}.menu li:not(.separator):focus,
+    .menu-ui-${this.uniqueKey}.menu li:not(.separator).open {
+      background: Highlight;
+      color: HighlightText;
+    }
+
+    .menu-ui-${this.uniqueKey}.menu li:not(.separator):focus ul li:not(:focus):not(.open),
+    .menu-ui-${this.uniqueKey}.menu li:not(.separator).open ul li:not(:focus):not(.open) {
+      color: MenuText;
+    }
+  `;
+  document.head.appendChild(this.style);
+};
+
+MenuUI.installStyles();
 
 window.MenuUI = MenuUI;
 
