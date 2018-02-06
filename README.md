@@ -42,7 +42,7 @@ And define hierarchical menu based on `ul`-`li` list, like:
 Then, create an instance of `MenuUI` with required parameters like:
 
 ```javascript
-var menuUI = await MenuUI.show({
+var menuUI = new MenuUI({
   root:      document.getElementById('menu'),
   onCommand: (aItem, aEvent) => {
     // handle click event on an item
