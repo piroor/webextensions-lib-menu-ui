@@ -26,7 +26,7 @@ const MenuUI = function(aParams = {}) {
 
   this.screen = document.createElement('div');
   this.screen.classList.add(`menu-ui-${this.uniqueKey}-blocking-screen`);
-  this.root.parentNode.appendChild(this.screen);
+  this.root.parentNode.insertBefore(this.screen, this.root.nextSibling);
 };
 
 MenuUI.uniqueKey = parseInt(Math.random() * Math.pow(2, 16));
