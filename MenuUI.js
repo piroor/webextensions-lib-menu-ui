@@ -271,21 +271,14 @@ MenuUI.prototype = {
   },
 
   onClick: async function(aEvent) {
-    if (aEvent.button != 0)
-      return this.close();
-
     aEvent.stopImmediatePropagation();
     aEvent.stopPropagation();
     aEvent.preventDefault();
 
-    var target = this.getEffectiveItem(aEvent.target);
+    const target = this.getEffectiveItem(aEvent.target);
     if (!target ||
-        target.classList.contains('has-submenu') ||
-        !target.id) {
-      let elementTarget = aEvent.target;
-      if (elementTarget.nodeType != Node.ELEMENT_NODE)
-        elementTarget = elementTarget.parentNode;
-      if (!elementTarget.matches(`#${this.root.id} *`))
+        target.classList.contains('has-submenu')) {
+      if (!aEvent.target.closest(`#${this.root.id}`))
         return this.close();
       return;
     }
