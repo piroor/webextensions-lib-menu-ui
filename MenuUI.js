@@ -408,7 +408,11 @@ MenuUI.prototype = {
       case aEvent.DOM_VK_ESCAPE:
         aEvent.stopPropagation();
         aEvent.preventDefault();
-        this.close();
+        if (!this.lastFocusedItem ||
+            this.lastFocusedItem.parentNode == this.root)
+          this.close();
+        else
+          this.digOut();
         break;
 
       default:
