@@ -19,9 +19,6 @@ const MenuUI = function(aParams = {}) {
   this.onClick           = this.onClick.bind(this);
   this.onKeyPress        = this.onKeyPress.bind(this);
   this.onTransitionEnd   = this.onTransitionEnd.bind(this);
-  for (let item of Array.slice(this.root.querySelectorAll('li:not(.separator)'))) {
-    this.applyItemAccessKey(item);
-  }
 
   this.installStyles();
   this.root.classList.add(`menu-ui-${this.uniqueKey}`);
@@ -133,17 +130,37 @@ MenuUI.prototype = {
     document.head.appendChild(this.style);
   },
 
-  applyItemAccessKey(aItem) {
-    const ACCESS_KEY_MATCHER = /&([a-z])/i;
+  updateAccessKey(aItem) {
+    const ACCESS_KEY_MATCHER = /(&([a-z]))/i;
     const title = aItem.getAttribute('title');
     if (title)
-      aItem.setAttribute('title', title.replace(ACCESS_KEY_MATCHER, '$1'));
-    const matchedKey = aItem.textContent.match(ACCESS_KEY_MATCHER);
-    aItem.innerHTML = aItem.innerHTML.replace(/&amp;([a-z])/i, '<span class="accesskey">$1</span>');
-    if (matchedKey)
-      aItem.dataset.accessKey = matchedKey[1].toLowerCase();
+      aItem.setAttribute('title', title.replace(ACCESS_KEY_MATCHER, '$2'));
+    const label = evaluateXPath('child::text()', aItem, XPathResult.STRING_TYPE).stringValue;
+    const matchedKey = label.match(ACCESS_KEY_MATCHER);
+    if (matchedKey) {
+      const textNode = evaluateXPath(
+        `child::node()[contains(self::text(), "${matchedKey[1]}")]`,
+        aItem,
+        XPathResult.FIRST_ORDERED_NODE_TYPE
+      ).singleNodeValue;
+      if (textNode) {
+        const range = document.createRange();
+        const startPosition = textNode.nodeValue.indexOf(matchedKey[1]);
+        range.setStart(textNode, startPosition);
+        range.setEnd(textNode, startPosition + 2);
+        range.deleteContents();
+        const accessKeyNode = document.createElement('span');
+        accessKeyNode.classList.add('accesskey');
+        accessKeyNode.textContent = matchedKey[2];
+        range.insertNode(accessKeyNode);
+        range.detach();
+      }
+      aItem.dataset.accessKey = matchedKey[2].toLowerCase();
+    }
     else if (/^([a-z])/i.test(aItem.textContent))
       aItem.dataset.subAccessKey = RegExp.$1.toLowerCase();
+    else
+      aItem.dataset.accessKey = aItem.dataset.subAccessKey = null;
   },
 
   open: async function(aOptions = {}) {
@@ -156,6 +173,7 @@ MenuUI.prototype = {
     for (let item of Array.slice(this.root.querySelectorAll('li:not(.separator)'))) {
       item.tabIndex = 0;
       item.classList.remove('open');
+      this.updateAccessKey(item);
       if (item.querySelector('ul'))
         item.classList.add('has-submenu');
       else
