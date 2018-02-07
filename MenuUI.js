@@ -52,7 +52,7 @@ MenuUI.prototype = {
   lastFocusedItem: null,
 
   updateAccessKey(aItem) {
-    const ACCESS_KEY_MATCHER = /(&([a-z]))/i;
+    const ACCESS_KEY_MATCHER = /(&([^\s]))/i;
     const title = aItem.getAttribute('title');
     if (title)
       aItem.setAttribute('title', title.replace(ACCESS_KEY_MATCHER, '$2'));
@@ -78,7 +78,7 @@ MenuUI.prototype = {
       }
       aItem.dataset.accessKey = matchedKey[2].toLowerCase();
     }
-    else if (/^([a-z])/i.test(aItem.textContent))
+    else if (/^([^\s])/i.test(aItem.textContent))
       aItem.dataset.subAccessKey = RegExp.$1.toLowerCase();
     else
       aItem.dataset.accessKey = aItem.dataset.subAccessKey = null;

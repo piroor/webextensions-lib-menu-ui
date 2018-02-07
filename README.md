@@ -143,5 +143,5 @@ Note that the menu is not closed automatically by clicking on a menu item. You n
 
 ### Accesskeys for keyboard operations
 
-If the label of a menu item contains a part `&` (`&amp;` in HTML) followed by an alphabet character (like `&A`), the alphabet character following to the `&` will be treated as the accesskey of the item.
+If the label of a menu item contains a part `&` (`&amp;` in HTML) followed by an non-whitespace character (like `&A`), the character following to the `&` will be treated as the accesskey of the item.
 
