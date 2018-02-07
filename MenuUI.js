@@ -253,8 +253,7 @@ MenuUI.prototype = {
   },
 
   onBlur(aEvent) {
-    if (!aEvent.target.closest ||
-        !aEvent.target.closest(`#${this.root.id}`))
+    if (aEvent.target == document)
       this.close();
   },
 
