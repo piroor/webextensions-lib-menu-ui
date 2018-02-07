@@ -181,6 +181,16 @@ MenuUI.prototype = {
     if (top === undefined)
       top = Math.max(0, (containerRect.height - menuRect.height) / 2);
 
+    if (!aOptions.anchor && aMenu == this.root) {
+      // reposition to avoid the menu is opened below the cursor
+      if (containerRect.bottom - top < menuRect.height) {
+        top = top - menuRect.height;
+      }
+      if (containerRect.right - left < menuRect.width) {
+        left = left - menuRect.width;
+      }
+    }
+
     const minMargin = 3;
     left = Math.max(minMargin, Math.min(left, containerRect.width - menuRect.width - minMargin));
     top  = Math.max(minMargin, Math.min(top,  containerRect.height - menuRect.height - minMargin));
