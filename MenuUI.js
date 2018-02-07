@@ -339,7 +339,8 @@ MenuUI.prototype = {
   },
 
   onMouseUp(aEvent) {
-    if (!this.mouseDownAfterOpen)
+    if (!this.mouseDownAfterOpen &&
+        aEvent.target.closest(`#${this.root.id}`))
       this.onClick(aEvent);
   },
 
