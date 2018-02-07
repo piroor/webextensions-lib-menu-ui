@@ -635,32 +635,27 @@ MenuUI.installStyles = function() {
     }
 
     ${common}.menu-ui-marker {
-      display: none;
       opacity: 0;
       pointer-events: none;
       position: fixed;
+    }
+
+    ${common}.menu-ui-marker.open {
+      border: 0.5em solid transparent;
+      content: "";
+      height: 0;
+      left: 0;
+      opacity: 1;
+      top: 0;
+      width: 0;
       z-index: 999999;
     }
 
-    ${common}.menu-ui-marker.top,
-    ${common}.menu-ui-marker.bottom {
-      border: 0.5em solid transparent;
-      content: "";
-      display: block;
-      height: 0;
-      left: 0;
-      width: 0;
-      top: 0;
-    }
     ${common}.menu-ui-marker.top {
       border-bottom: 0.5em solid var(--menu-ui-background-color);
     }
     ${common}.menu-ui-marker.bottom {
       border-top: 0.5em solid var(--menu-ui-background-color);
-    }
-
-    ${common}.menu-ui-marker.panel.open {
-      opacity: 1;
     }
 
     /* panel-like appearance */
@@ -672,9 +667,8 @@ MenuUI.installStyles = function() {
     }
     ${common}.menu-ui.panel,
     ${common}.menu-ui.panel ul {
-      border-radius: 0.5em;
       box-shadow: 0.1em 0.1em 0.8em rgba(0, 0, 0, 0.65);
-      padding: 0.5em 0;
+      padding: 0.25em 0;
     }
 
     ${common}.menu-ui.panel li {
