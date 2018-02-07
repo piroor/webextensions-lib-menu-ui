@@ -35,6 +35,7 @@ And define hierarchical menu based on `ul`-`li` list, like:
       </li>
     </ul>
   </li>
+  <li class="separator"></li>
   <li>&amp;Close</li>
 </ul>
 ```
@@ -140,6 +141,10 @@ var menuUI = new MenuUI({
 ```
 
 Note that the menu is not closed automatically by clicking on a menu item. You need to close the menu itself manually after doing something.
+
+### Menu separator
+
+Blank `<li>` elements with a class `separator` are treated as menu separator.
 
 ### Accesskeys for keyboard operations
 
