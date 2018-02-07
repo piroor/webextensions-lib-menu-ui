@@ -21,6 +21,7 @@ const MenuUI = function(aParams = {}) {
   this.onClick           = this.onClick.bind(this);
   this.onKeyPress        = this.onKeyPress.bind(this);
   this.onTransitionEnd   = this.onTransitionEnd.bind(this);
+  this.onContextMenu     = this.onContextMenu.bind(this);
 
   if (!this.root.id)
     this.root.id = `MenuUI-root-${this.uniqueKey}-${parseInt(Math.random() * Math.pow(2, 16))}`;
@@ -121,6 +122,7 @@ MenuUI.prototype = {
     setTimeout(() => {
       this.root.parentNode.addEventListener('mouseover', this.onMouseOver);
       this.root.addEventListener('transitionend', this.onTransitionEnd);
+      window.addEventListener('contextmenu', this.onContextMenu, { capture: true });
       window.addEventListener('mousedown', this.onMouseDown, { capture: true });
       window.addEventListener('mouseup', this.onMouseUp, { capture: true });
       window.addEventListener('click', this.onClick, { capture: true });
@@ -218,6 +220,7 @@ MenuUI.prototype = {
     }
     this.root.parentNode.removeEventListener('mouseover', this.onMouseOver);
     this.root.removeEventListener('transitionend', this.onTransitionEnd);
+    window.removeEventListener('contextmenu', this.onContextMenu, { capture: true });
     window.removeEventListener('mousedown', this.onMouseDown, { capture: true });
     window.removeEventListener('mouseup', this.onMouseUp, { capture: true });
     window.removeEventListener('click', this.onClick, { capture: true });
@@ -538,6 +541,12 @@ MenuUI.prototype = {
     this.setHover(item);
     item.focus();
     this.lastFocusedItem = item;
+  },
+
+  onContextMenu(aEvent) {
+    aEvent.stopImmediatePropagation();
+    aEvent.stopPropagation();
+    aEvent.preventDefault();
   }
 };
 
