@@ -103,6 +103,8 @@ MenuUI.prototype = {
     }
     this.root.classList.add('open');
     this.screen.classList.add('open');
+    this.marker.classList.remove('top');
+    this.marker.classList.remove('bottom');
     if (this.anchor) {
       this.anchor.classList.add('open');
       this.marker.style.transition = `opacity ${this.animationDuration}ms ease-out`;
@@ -136,8 +138,6 @@ MenuUI.prototype = {
     if (aOptions.anchor &&
         (left === undefined || top === undefined)) {
       const anchorRect = aOptions.anchor.getBoundingClientRect();
-      this.marker.classList.remove('top');
-      this.marker.classList.remove('bottom');
       if (containerRect.bottom - anchorRect.bottom >= menuRect.height) {
         top = anchorRect.bottom;
         this.marker.classList.add('top');
@@ -547,6 +547,8 @@ MenuUI.installStyles = function() {
   this.style.textContent = `
     ${common}.menu-ui,
     ${common}.menu-ui ul {
+      background: var(--menu-ui-background-color);
+      color: var(--menu-ui-text-color);
       margin: 0;
       max-height: calc(100% - 6px);
       max-width: calc(100% - 6px);
@@ -571,6 +573,12 @@ MenuUI.installStyles = function() {
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+    }
+
+    ${common}.menu-ui li:not(.separator):focus,
+    ${common}.menu-ui li:not(.separator).open {
+      background: var(--menu-ui-background-color-active);
+      color: var(--menu-ui-text-color-active);
     }
 
     ${common}.menu-ui li.radio.checked::before,
@@ -623,6 +631,7 @@ MenuUI.installStyles = function() {
     ${common}.menu-ui.panel li:not(.separator):focus ul li:not(:focus):not(.open),
     ${common}.menu-ui.panel li:not(.separator).open ul li:not(:focus):not(.open) {
       background: transparent;
+      color: var(--menu-ui-text-color);
     }
 
     ${common}.menu-ui-marker {
@@ -633,32 +642,8 @@ MenuUI.installStyles = function() {
       z-index: 999999;
     }
 
-    /* panel-like appearance */
-    ${common}.menu-ui.panel,
-    ${common}.menu-ui.panel ul {
-      background: -moz-dialog;
-      border-radius: 0.5em;
-      box-shadow: 0.1em 0.1em 0.8em rgba(0, 0, 0, 0.65);
-      color: -moz-dialogtext;
-      padding: 0.5em 0;
-    }
-
-    ${common}.menu-ui.panel li {
-      padding: 0.15em 1em;
-    }
-
-    ${common}.menu-ui.panel li:not(.separator):focus,
-    ${common}.menu-ui.panel li:not(.separator).open {
-      background: Highlight;
-      color: HighlightText;
-    }
-
-    ${common}.menu-ui.panel li:not(.separator):focus ul li:not(:focus):not(.open),
-    ${common}.menu-ui.panel li:not(.separator).open ul li:not(:focus):not(.open) {
-      color: -moz-dialogtext;
-    }
-
-    ${common}.menu-ui-marker.panel {
+    ${common}.menu-ui-marker.top,
+    ${common}.menu-ui-marker.bottom {
       border: 0.5em solid transparent;
       content: "";
       display: block;
@@ -667,25 +652,47 @@ MenuUI.installStyles = function() {
       width: 0;
       top: 0;
     }
-    ${common}.menu-ui-marker.panel.top {
-      border-bottom: 0.5em solid -moz-dialog;
+    ${common}.menu-ui-marker.top {
+      border-bottom: 0.5em solid var(--menu-ui-background-color);
     }
-    ${common}.menu-ui-marker.panel.bottom {
-      border-top: 0.5em solid -moz-dialog;
+    ${common}.menu-ui-marker.bottom {
+      border-top: 0.5em solid var(--menu-ui-background-color);
     }
 
     ${common}.menu-ui-marker.panel.open {
       opacity: 1;
     }
 
+    /* panel-like appearance */
+    ${common}.panel {
+      --menu-ui-background-color: -moz-dialog;
+      --menu-ui-text-color: -moz-dialogtext;
+      --menu-ui-background-color-active: Highlight;
+      --menu-ui-text-color-active: HighlightText;
+    }
+    ${common}.menu-ui.panel,
+    ${common}.menu-ui.panel ul {
+      border-radius: 0.5em;
+      box-shadow: 0.1em 0.1em 0.8em rgba(0, 0, 0, 0.65);
+      padding: 0.5em 0;
+    }
+
+    ${common}.menu-ui.panel li {
+      padding: 0.15em 1em;
+    }
+
 
     /* Menu-like appearance */
+    ${common}.menu {
+      --menu-ui-background-color: Menu;
+      --menu-ui-text-color: MenuText;
+      --menu-ui-background-color-active: Highlight;
+      --menu-ui-text-color-active: HighlightText;
+    }
     ${common}.menu-ui.menu,
     ${common}.menu-ui.menu ul {
-      background: Menu;
       border: 1px outset Menu;
       box-shadow: 0.1em 0.1em 0.5em rgba(0, 0, 0, 0.65);
-      color: MenuText;
       font: -moz-pull-down-menu;
     }
 
@@ -701,17 +708,6 @@ MenuUI.installStyles = function() {
       opacity: 0.5;
       padding: 0;
       visibility: visible;
-    }
-
-    ${common}.menu-ui.menu li:not(.separator):focus,
-    ${common}.menu-ui.menu li:not(.separator).open {
-      background: Highlight;
-      color: HighlightText;
-    }
-
-    ${common}.menu-ui.menu li:not(.separator):focus ul li:not(:focus):not(.open),
-    ${common}.menu-ui.menu li:not(.separator).open ul li:not(:focus):not(.open) {
-      color: MenuText;
     }
   `;
   document.head.appendChild(this.style);
