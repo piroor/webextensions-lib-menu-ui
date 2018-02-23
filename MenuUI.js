@@ -373,52 +373,51 @@ MenuUI.prototype = {
   },
 
   onKeyPress(aEvent) {
-    switch (aEvent.keyCode) {
-      case aEvent.DOM_VK_UP:
+    switch (aEvent.key) {
+      case 'ArrowUp':
         aEvent.stopPropagation();
         aEvent.preventDefault();
         this.advanceFocus(-1);
         break;
 
-      case aEvent.DOM_VK_DOWN:
+      case 'ArrowDown':
         aEvent.stopPropagation();
         aEvent.preventDefault();
         this.advanceFocus(1);
         break;
 
-      case aEvent.DOM_VK_RIGHT:
+      case 'ArrowRight':
         aEvent.stopPropagation();
         aEvent.preventDefault();
         this.digIn();
         break;
 
-      case aEvent.DOM_VK_LEFT:
+      case 'ArrowLeft':
         aEvent.stopPropagation();
         aEvent.preventDefault();
         this.digOut();
         break;
 
-      case aEvent.DOM_VK_HOME:
+      case 'Home':
         aEvent.stopPropagation();
         aEvent.preventDefault();
         this.advanceFocus(1, (this.lastFocusedItem && this.lastFocusedItem.parentNode || this.root).lastChild);
         break;
 
-      case aEvent.DOM_VK_END:
+      case 'End':
         aEvent.stopPropagation();
         aEvent.preventDefault();
         this.advanceFocus(-1, (this.lastFocusedItem && this.lastFocusedItem.parentNode || this.root).firstChild);
         break;
 
-      case aEvent.DOM_VK_ENTER:
-      case aEvent.DOM_VK_RETURN:
+      case 'Enter':
         aEvent.stopPropagation();
         aEvent.preventDefault();
         if (this.lastFocusedItem)
           this.onCommand(this.lastFocusedItem, aEvent);
         break;
 
-      case aEvent.DOM_VK_ESCAPE:
+      case 'Escape':
         aEvent.stopPropagation();
         aEvent.preventDefault();
         if (!this.lastFocusedItem ||
@@ -429,7 +428,7 @@ MenuUI.prototype = {
         break;
 
       default:
-        if (aEvent.key) {
+        if (aEvent.key.length == 1) {
           for (let attribute of ['access-key', 'sub-access-key']) {
             const current = this.lastFocusedItem || this.root.firstChild;
             const condition = `@data-${attribute}="${aEvent.key.toLowerCase()}"`;
