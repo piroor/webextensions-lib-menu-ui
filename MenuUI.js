@@ -97,6 +97,10 @@ MenuUI.prototype = {
       item.tabIndex = 0;
       item.classList.remove('open');
       this.updateAccessKey(item);
+      if (item.dataset.icon)
+        item.style.backgroundImage = `url(${JSON.stringify(item.dataset.icon)})`;
+      else
+        item.style.backgroundImage = '';
       if (item.querySelector('ul'))
         item.classList.add('has-submenu');
       else
@@ -570,7 +574,7 @@ MenuUI.installStyles = function() {
   this.style.textContent = `
     ${common}.menu-ui,
     ${common}.menu-ui ul {
-      background: var(--menu-ui-background-color);
+      background-color: var(--menu-ui-background-color);
       color: var(--menu-ui-text-color);
       margin: 0;
       max-height: calc(100% - 6px);
@@ -600,7 +604,7 @@ MenuUI.installStyles = function() {
 
     ${common}.menu-ui li:not(.separator):focus,
     ${common}.menu-ui li:not(.separator).open {
-      background: var(--menu-ui-background-color-active);
+      background-color: var(--menu-ui-background-color-active);
       color: var(--menu-ui-text-color-active);
     }
 
@@ -653,7 +657,7 @@ MenuUI.installStyles = function() {
 
     ${common}.menu-ui.panel li:not(.separator):focus ul li:not(:focus):not(.open),
     ${common}.menu-ui.panel li:not(.separator).open ul li:not(:focus):not(.open) {
-      background: transparent;
+      background-color: transparent;
       color: var(--menu-ui-text-color);
     }
 
@@ -683,6 +687,12 @@ MenuUI.installStyles = function() {
 
     ${common}.menu-ui li.disabled {
       opacity: 0.5;
+    }
+
+    ${common}.menu-ui li[data-icon] {
+      background-position: left center;
+      background-repeat: no-repeat;
+      background-size: 16px;
     }
 
     /* panel-like appearance */
@@ -737,6 +747,10 @@ MenuUI.installStyles = function() {
       opacity: 0.5;
       padding: 0;
       visibility: visible;
+    }
+
+    ${common}.menu-ui.menu li[data-icon] {
+      background-position: 0.5em center;
     }
   `;
   document.head.appendChild(this.style);
