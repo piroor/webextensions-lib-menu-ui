@@ -681,7 +681,7 @@ MenuUI.installStyles = function() {
       border-top: 0.5em solid var(--menu-ui-background-color);
     }
 
-    ${common}.menu-ui.menu li.disabled {
+    ${common}.menu-ui li.disabled {
       opacity: 0.5;
     }
 
