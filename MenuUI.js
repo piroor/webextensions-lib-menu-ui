@@ -363,7 +363,8 @@ MenuUI.prototype = {
 
     const target = this.getEffectiveItem(aEvent.target);
     if (!target ||
-        target.classList.contains('has-submenu')) {
+        target.classList.contains('has-submenu') ||
+        target.classList.contains('disabled')) {
       if (!aEvent.target.closest(`#${this.root.id}`))
         return this.close();
       return;
@@ -451,17 +452,17 @@ MenuUI.prototype = {
     const extraCondition = aCondition ? `[${aCondition}]` : '' ;
     const item = (
       evaluateXPath(
-        `preceding-sibling::li[not(${hasClass('separator')})]${extraCondition}[1]`,
+        `preceding-sibling::li[not(${hasClass('separator')})][not(${hasClass('disabled')})]${extraCondition}[1]`,
         aBase,
         XPathResult.FIRST_ORDERED_NODE_TYPE
       ).singleNodeValue ||
       evaluateXPath(
-        `following-sibling::li[not(${hasClass('separator')})]${extraCondition}[last()]`,
+        `following-sibling::li[not(${hasClass('separator')})][not(${hasClass('disabled')})]${extraCondition}[last()]`,
         aBase,
         XPathResult.FIRST_ORDERED_NODE_TYPE
       ).singleNodeValue ||
       evaluateXPath(
-        `self::li[not(${hasClass('separator')})]${extraCondition}`,
+        `self::li[not(${hasClass('separator')})][not(${hasClass('disabled')})]${extraCondition}`,
         aBase,
         XPathResult.FIRST_ORDERED_NODE_TYPE
       ).singleNodeValue
@@ -475,17 +476,17 @@ MenuUI.prototype = {
     const extraCondition = aCondition ? `[${aCondition}]` : '' ;
     const item = (
       evaluateXPath(
-        `following-sibling::li[not(${hasClass('separator')})]${extraCondition}[1]`,
+        `following-sibling::li[not(${hasClass('separator')})][not(${hasClass('disabled')})]${extraCondition}[1]`,
         aBase,
         XPathResult.FIRST_ORDERED_NODE_TYPE
       ).singleNodeValue ||
       evaluateXPath(
-        `preceding-sibling::li[not(${hasClass('separator')})]${extraCondition}[last()]`,
+        `preceding-sibling::li[not(${hasClass('separator')})][not(${hasClass('disabled')})]${extraCondition}[last()]`,
         aBase,
         XPathResult.FIRST_ORDERED_NODE_TYPE
       ).singleNodeValue ||
       evaluateXPath(
-        `self::li[not(${hasClass('separator')})]${extraCondition}`,
+        `self::li[not(${hasClass('separator')})][not(${hasClass('disabled')})]${extraCondition}`,
         aBase,
         XPathResult.FIRST_ORDERED_NODE_TYPE
       ).singleNodeValue
@@ -674,6 +675,10 @@ MenuUI.installStyles = function() {
     }
     ${common}.menu-ui-marker.bottom {
       border-top: 0.5em solid var(--menu-ui-background-color);
+    }
+
+    ${common}.menu-ui.menu li.disabled {
+      opacity: 0.5;
     }
 
     /* panel-like appearance */
