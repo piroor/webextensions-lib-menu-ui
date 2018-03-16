@@ -414,8 +414,12 @@ MenuUI.prototype = {
       case 'Enter':
         aEvent.stopPropagation();
         aEvent.preventDefault();
-        if (this.lastFocusedItem)
-          this.onCommand(this.lastFocusedItem, aEvent);
+        if (this.lastFocusedItem) {
+          if (this.lastFocusedItem.classList.contains('disabled'))
+            this.close();
+          else
+            this.onCommand(this.lastFocusedItem, aEvent);
+        }
         break;
 
       case 'Escape':
@@ -452,17 +456,17 @@ MenuUI.prototype = {
     const extraCondition = aCondition ? `[${aCondition}]` : '' ;
     const item = (
       evaluateXPath(
-        `preceding-sibling::li[not(${hasClass('separator')})][not(${hasClass('disabled')})]${extraCondition}[1]`,
+        `preceding-sibling::li[not(${hasClass('separator')})]${extraCondition}[1]`,
         aBase,
         XPathResult.FIRST_ORDERED_NODE_TYPE
       ).singleNodeValue ||
       evaluateXPath(
-        `following-sibling::li[not(${hasClass('separator')})][not(${hasClass('disabled')})]${extraCondition}[last()]`,
+        `following-sibling::li[not(${hasClass('separator')})]${extraCondition}[last()]`,
         aBase,
         XPathResult.FIRST_ORDERED_NODE_TYPE
       ).singleNodeValue ||
       evaluateXPath(
-        `self::li[not(${hasClass('separator')})][not(${hasClass('disabled')})]${extraCondition}`,
+        `self::li[not(${hasClass('separator')})]${extraCondition}`,
         aBase,
         XPathResult.FIRST_ORDERED_NODE_TYPE
       ).singleNodeValue
@@ -476,17 +480,17 @@ MenuUI.prototype = {
     const extraCondition = aCondition ? `[${aCondition}]` : '' ;
     const item = (
       evaluateXPath(
-        `following-sibling::li[not(${hasClass('separator')})][not(${hasClass('disabled')})]${extraCondition}[1]`,
+        `following-sibling::li[not(${hasClass('separator')})]${extraCondition}[1]`,
         aBase,
         XPathResult.FIRST_ORDERED_NODE_TYPE
       ).singleNodeValue ||
       evaluateXPath(
-        `preceding-sibling::li[not(${hasClass('separator')})][not(${hasClass('disabled')})]${extraCondition}[last()]`,
+        `preceding-sibling::li[not(${hasClass('separator')})]${extraCondition}[last()]`,
         aBase,
         XPathResult.FIRST_ORDERED_NODE_TYPE
       ).singleNodeValue ||
       evaluateXPath(
-        `self::li[not(${hasClass('separator')})][not(${hasClass('disabled')})]${extraCondition}`,
+        `self::li[not(${hasClass('separator')})]${extraCondition}`,
         aBase,
         XPathResult.FIRST_ORDERED_NODE_TYPE
       ).singleNodeValue
@@ -518,7 +522,7 @@ MenuUI.prototype = {
       return;
     }
     const submenu = this.lastFocusedItem.querySelector('ul');
-    if (!submenu)
+    if (!submenu || this.lastFocusedItem.classList.contains('disabled'))
       return;
     this.closeOtherSubmenus(this.lastFocusedItem);
     this.openSubmenuFor(this.lastFocusedItem);
@@ -688,6 +692,10 @@ MenuUI.installStyles = function() {
       --menu-ui-background-color-active: Highlight;
       --menu-ui-text-color-active: HighlightText;
     }
+    ${common}.panel li.disabled {
+      --menu-ui-background-color-active: InactiveCaptionText;
+      --menu-ui-text-color-active: InactiveCaption;
+    }
     ${common}.menu-ui.panel,
     ${common}.menu-ui.panel ul {
       box-shadow: 0.1em 0.1em 0.8em rgba(0, 0, 0, 0.65);
@@ -705,6 +713,10 @@ MenuUI.installStyles = function() {
       --menu-ui-text-color: MenuText;
       --menu-ui-background-color-active: Highlight;
       --menu-ui-text-color-active: HighlightText;
+    }
+    ${common}.menu li.disabled {
+      --menu-ui-background-color-active: InactiveCaptionText;
+      --menu-ui-text-color-active: InactiveCaption;
     }
     ${common}.menu-ui.menu,
     ${common}.menu-ui.menu ul {
