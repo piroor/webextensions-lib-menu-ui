@@ -750,7 +750,7 @@ MenuUI.installStyles = function() {
     }
 
     ${common}.menu-ui.menu li[data-icon] {
-      background-position: 0.5em center;
+      background-position: calc(1em - 16px + 0.5em) center;
     }
   `;
   document.head.appendChild(this.style);
