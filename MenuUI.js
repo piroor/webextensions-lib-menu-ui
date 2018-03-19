@@ -629,7 +629,8 @@ MenuUI.installStyles = function() {
     ${common}.menu-ui li.has-submenu::after {
       content: "▸";
       position: absolute;
-      right: 0.5em;
+      right: 0.25em;
+      transform: scalex(0.65);
     }
 
     ${common}.menu-ui .accesskey {
