@@ -627,10 +627,10 @@ MenuUI.installStyles = function() {
       padding-right: 1.5em;
     }
     ${common}.menu-ui li.has-submenu::after {
-      content: "▸";
+      content: "❯";
       position: absolute;
       right: 0.25em;
-      transform: scalex(0.65);
+      transform: scale(0.75);
     }
 
     ${common}.menu-ui .accesskey {
