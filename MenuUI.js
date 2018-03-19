@@ -627,7 +627,7 @@ MenuUI.installStyles = function() {
       padding-right: 1.5em;
     }
     ${common}.menu-ui li.has-submenu::after {
-      content: ">";
+      content: "▸";
       position: absolute;
       right: 0.5em;
     }
