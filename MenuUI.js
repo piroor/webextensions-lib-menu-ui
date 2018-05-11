@@ -19,7 +19,7 @@ const MenuUI = function(aParams = {}) {
   this.onMouseDown       = this.onMouseDown.bind(this);
   this.onMouseUp         = this.onMouseUp.bind(this);
   this.onClick           = this.onClick.bind(this);
-  this.onKeyPress        = this.onKeyPress.bind(this);
+  this.onKeyUp           = this.onKeyUp.bind(this);
   this.onTransitionEnd   = this.onTransitionEnd.bind(this);
   this.onContextMenu     = this.onContextMenu.bind(this);
 
@@ -130,7 +130,7 @@ MenuUI.prototype = {
       window.addEventListener('mousedown', this.onMouseDown, { capture: true });
       window.addEventListener('mouseup', this.onMouseUp, { capture: true });
       window.addEventListener('click', this.onClick, { capture: true });
-      window.addEventListener('keypress', this.onKeyPress, { capture: true });
+      window.addEventListener('keyup', this.onKeyUp, { capture: true });
       window.addEventListener('blur', this.onBlur, { capture: true });
     }, this.animationDuration);
   },
@@ -238,7 +238,7 @@ MenuUI.prototype = {
     window.removeEventListener('mousedown', this.onMouseDown, { capture: true });
     window.removeEventListener('mouseup', this.onMouseUp, { capture: true });
     window.removeEventListener('click', this.onClick, { capture: true });
-    window.removeEventListener('keypress', this.onKeyPress, { capture: true });
+    window.removeEventListener('keyup', this.onKeyUp, { capture: true });
     window.removeEventListener('blur', this.onBlur, { capture: true });
   },
 
@@ -377,7 +377,7 @@ MenuUI.prototype = {
     this.onCommand(target, aEvent);
   },
 
-  onKeyPress(aEvent) {
+  onKeyUp(aEvent) {
     switch (aEvent.key) {
       case 'ArrowUp':
         aEvent.stopPropagation();
