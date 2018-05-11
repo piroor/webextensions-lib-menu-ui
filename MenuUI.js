@@ -19,6 +19,7 @@ const MenuUI = function(aParams = {}) {
   this.onMouseDown       = this.onMouseDown.bind(this);
   this.onMouseUp         = this.onMouseUp.bind(this);
   this.onClick           = this.onClick.bind(this);
+  this.onKeyDown         = this.onKeyDown.bind(this);
   this.onKeyUp           = this.onKeyUp.bind(this);
   this.onTransitionEnd   = this.onTransitionEnd.bind(this);
   this.onContextMenu     = this.onContextMenu.bind(this);
@@ -130,6 +131,7 @@ MenuUI.prototype = {
       window.addEventListener('mousedown', this.onMouseDown, { capture: true });
       window.addEventListener('mouseup', this.onMouseUp, { capture: true });
       window.addEventListener('click', this.onClick, { capture: true });
+      window.addEventListener('keydown', this.onKeyDown, { capture: true });
       window.addEventListener('keyup', this.onKeyUp, { capture: true });
       window.addEventListener('blur', this.onBlur, { capture: true });
     }, this.animationDuration);
@@ -238,6 +240,7 @@ MenuUI.prototype = {
     window.removeEventListener('mousedown', this.onMouseDown, { capture: true });
     window.removeEventListener('mouseup', this.onMouseUp, { capture: true });
     window.removeEventListener('click', this.onClick, { capture: true });
+    window.removeEventListener('keydown', this.onKeyDown, { capture: true });
     window.removeEventListener('keyup', this.onKeyUp, { capture: true });
     window.removeEventListener('blur', this.onBlur, { capture: true });
   },
@@ -377,6 +380,41 @@ MenuUI.prototype = {
     this.onCommand(target, aEvent);
   },
 
+  getNextFocusedItemByAccesskey(aKey) {
+    for (let attribute of ['access-key', 'sub-access-key']) {
+      const current = this.lastFocusedItem || this.root.firstChild;
+      const condition = `@data-${attribute}="${aKey.toLowerCase()}"`;
+      const item = this.getNextItem(current, condition);
+      if (item)
+        return item;
+    }
+    return null;
+  },
+
+  onKeyDown(aEvent) {
+    switch (aEvent.key) {
+      case 'ArrowUp':
+      case 'ArrowDown':
+      case 'ArrowRight':
+      case 'ArrowLeft':
+      case 'Home':
+      case 'End':
+      case 'Enter':
+      case 'Escape':
+        aEvent.stopPropagation();
+        aEvent.preventDefault();
+        return;
+
+      default:
+        if (aEvent.key.length == 1 &&
+            this.getNextFocusedItemByAccesskey(aEvent.key)) {
+          aEvent.stopPropagation();
+          aEvent.preventDefault();
+        }
+        return;
+    }
+  },
+
   onKeyUp(aEvent) {
     switch (aEvent.key) {
       case 'ArrowUp':
@@ -438,18 +476,13 @@ MenuUI.prototype = {
 
       default:
         if (aEvent.key.length == 1) {
-          for (let attribute of ['access-key', 'sub-access-key']) {
-            const current = this.lastFocusedItem || this.root.firstChild;
-            const condition = `@data-${attribute}="${aEvent.key.toLowerCase()}"`;
-            const item = this.getNextItem(current, condition);
-            if (item) {
-              this.lastFocusedItem = item;
-              this.lastFocusedItem.focus();
-              this.setHover(null);
-              if (this.getNextItem(item, condition) == item)
-                this.onCommand(item, aEvent);
-              break;
-            }
+          const item = this.getNextFocusedItemByAccesskey(aEvent.key);
+          if (item) {
+            this.lastFocusedItem = item;
+            this.lastFocusedItem.focus();
+            this.setHover(null);
+            if (this.getNextItem(item, condition) == item)
+              this.onCommand(item, aEvent);
           }
         }
         return;
