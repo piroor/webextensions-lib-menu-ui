@@ -391,7 +391,12 @@ MenuUI.prototype = {
     return null;
   },
 
+  lastDownKey: null,
+
   onKeyDown(aEvent) {
+    if (aEvent.key == this.lastDownKey) // handle keyrepeat
+      this.onKeyUp(aEvent);
+    this.lastDownKey = aEvent.key;
     switch (aEvent.key) {
       case 'ArrowUp':
       case 'ArrowDown':
@@ -416,6 +421,7 @@ MenuUI.prototype = {
   },
 
   onKeyUp(aEvent) {
+    this.lastDownKey = null;
     switch (aEvent.key) {
       case 'ArrowUp':
         aEvent.stopPropagation();
