@@ -391,37 +391,7 @@ MenuUI.prototype = {
     return null;
   },
 
-  lastDownKey: null,
-
   onKeyDown(aEvent) {
-    if (aEvent.key == this.lastDownKey) // handle keyrepeat
-      this.onKeyUp(aEvent);
-    this.lastDownKey = aEvent.key;
-    switch (aEvent.key) {
-      case 'ArrowUp':
-      case 'ArrowDown':
-      case 'ArrowRight':
-      case 'ArrowLeft':
-      case 'Home':
-      case 'End':
-      case 'Enter':
-      case 'Escape':
-        aEvent.stopPropagation();
-        aEvent.preventDefault();
-        return;
-
-      default:
-        if (aEvent.key.length == 1 &&
-            this.getNextFocusedItemByAccesskey(aEvent.key)) {
-          aEvent.stopPropagation();
-          aEvent.preventDefault();
-        }
-        return;
-    }
-  },
-
-  onKeyUp(aEvent) {
-    this.lastDownKey = null;
     switch (aEvent.key) {
       case 'ArrowUp':
         aEvent.stopPropagation();
@@ -490,6 +460,30 @@ MenuUI.prototype = {
             if (this.getNextItem(item, condition) == item)
               this.onCommand(item, aEvent);
           }
+        }
+        return;
+    }
+  },
+
+  onKeyUp(aEvent) {
+    switch (aEvent.key) {
+      case 'ArrowUp':
+      case 'ArrowDown':
+      case 'ArrowRight':
+      case 'ArrowLeft':
+      case 'Home':
+      case 'End':
+      case 'Enter':
+      case 'Escape':
+        aEvent.stopPropagation();
+        aEvent.preventDefault();
+        return;
+
+      default:
+        if (aEvent.key.length == 1 &&
+            this.getNextFocusedItemByAccesskey(aEvent.key)) {
+          aEvent.stopPropagation();
+          aEvent.preventDefault();
         }
         return;
     }
