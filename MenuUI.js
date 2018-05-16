@@ -457,7 +457,7 @@ MenuUI.prototype = {
             this.lastFocusedItem = item;
             this.lastFocusedItem.focus();
             this.setHover(null);
-            if (this.getNextItem(item, condition) == item)
+            if (this.getNextFocusedItemByAccesskey(aEvent.key) == item)
               this.onCommand(item, aEvent);
           }
         }
