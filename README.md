@@ -112,6 +112,31 @@ button.addEventListener('click', () => {
 });
 ```
 
+#### Canceller for `open()` method
+
+The `open()` instance method accepts one more optional parameter, `canceller`. It is a function returning boolean value, and the opening operation of the menu will be canceled if the function returns `false`. For example:
+
+```javascript
+let canceled = false;
+
+button.addEventListener('click', () => {
+  menuUI.open({
+    left: aEvent.clientX,
+    top:  aEvent.clientY,
+    canceller: () => {
+      return canceled;
+    }
+  });
+});
+
+button.addEventListener('dblclick', () => {
+  canceled = true;
+  menuUI.close();
+});
+```
+
+On this case, if you double-click the button, the menu won't be shown.
+
 ### How to close the menu
 
 Calling an instance method `close()` will close the opened menu. This method will close all submenus also.
