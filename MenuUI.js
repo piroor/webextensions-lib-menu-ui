@@ -134,21 +134,21 @@ MenuUI.prototype = {
         this.close();
         return;
       }
-    setTimeout(() => {
-      if (this.tryCancelOpen()) {
-        this.close();
-        return;
-      }
-      this.root.parentNode.addEventListener('mouseover', this.onMouseOver);
-      this.root.addEventListener('transitionend', this.onTransitionEnd);
-      window.addEventListener('contextmenu', this.onContextMenu, { capture: true });
-      window.addEventListener('mousedown', this.onMouseDown, { capture: true });
-      window.addEventListener('mouseup', this.onMouseUp, { capture: true });
-      window.addEventListener('click', this.onClick, { capture: true });
-      window.addEventListener('keydown', this.onKeyDown, { capture: true });
-      window.addEventListener('keyup', this.onKeyUp, { capture: true });
-      window.addEventListener('blur', this.onBlur, { capture: true });
-    }, this.animationDuration);
+      setTimeout(() => {
+        if (this.tryCancelOpen()) {
+          this.close();
+          return;
+        }
+        this.root.parentNode.addEventListener('mouseover', this.onMouseOver);
+        this.root.addEventListener('transitionend', this.onTransitionEnd);
+        window.addEventListener('contextmenu', this.onContextMenu, { capture: true });
+        window.addEventListener('mousedown', this.onMouseDown, { capture: true });
+        window.addEventListener('mouseup', this.onMouseUp, { capture: true });
+        window.addEventListener('click', this.onClick, { capture: true });
+        window.addEventListener('keydown', this.onKeyDown, { capture: true });
+        window.addEventListener('keyup', this.onKeyUp, { capture: true });
+        window.addEventListener('blur', this.onBlur, { capture: true });
+      }, this.animationDuration);
     }, 0);
   },
 
