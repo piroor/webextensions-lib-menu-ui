@@ -52,6 +52,10 @@ MenuUI.prototype = {
 
   lastFocusedItem: null,
 
+  get opened() {
+    return this.root.classList.contains('open');
+  },
+
   updateAccessKey(aItem) {
     const ACCESS_KEY_MATCHER = /(&([^\s]))/i;
     const title = aItem.getAttribute('title');
