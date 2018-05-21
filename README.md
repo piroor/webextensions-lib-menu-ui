@@ -80,6 +80,8 @@ Here is the list of parameters for the `MenuUI` constructor:
  * `subMenuCloseDelay` (optional): The delay when a submenu is closed after foreign item is pointed, in milliseconds. (`Integer`, default value is `300`.)
 
 
+## Features of instances
+
 ### How to open the menu
 
 The instance method `open()` opens the menu. You can specify the position of the opened menu in two ways:
@@ -113,6 +115,10 @@ button.addEventListener('click', () => {
 ### How to close the menu
 
 Calling an instance method `close()` will close the opened menu. This method will close all submenus also.
+
+### How to know the menu is opened or not
+
+There is an instance property `opened`. It returns a boolean value and `true` means "opened", `false` means "closed".
 
 ### How to run command by menu selection
 
