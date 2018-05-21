@@ -214,7 +214,7 @@ MenuUI.prototype = {
   },
 
   close: async function() {
-    if (!this.root.classList.contains('open'))
+    if (!this.opened)
       return;
     this.root.classList.remove('open');
     this.screen.classList.remove('open');
