@@ -95,6 +95,7 @@ MenuUI.prototype = {
       delete this.closeTimeout;
       this.onClosed();
     }
+    this.canceller = aOptions.canceller;
     this.mouseDownAfterOpen = false;
     this.lastFocusedItem = null;
     this.anchor = aOptions.anchor;
@@ -129,6 +130,15 @@ MenuUI.prototype = {
       this.updatePosition(menu, aOptions);
     }
     setTimeout(() => {
+      if (this.tryCancelOpen()) {
+        this.close();
+        return;
+      }
+    setTimeout(() => {
+      if (this.tryCancelOpen()) {
+        this.close();
+        return;
+      }
       this.root.parentNode.addEventListener('mouseover', this.onMouseOver);
       this.root.addEventListener('transitionend', this.onTransitionEnd);
       window.addEventListener('contextmenu', this.onContextMenu, { capture: true });
@@ -139,6 +149,18 @@ MenuUI.prototype = {
       window.addEventListener('keyup', this.onKeyUp, { capture: true });
       window.addEventListener('blur', this.onBlur, { capture: true });
     }, this.animationDuration);
+    }, 0);
+  },
+
+  tryCancelOpen() {
+    if (!(typeof this.canceller == 'function'))
+      return false;
+    try {
+      return this.canceller();
+    }
+    catch(e) {
+    }
+    return false;
   },
 
   updatePosition(aMenu, aOptions = {}) {
@@ -216,6 +238,7 @@ MenuUI.prototype = {
   close: async function() {
     if (!this.opened)
       return;
+    this.tryCancelOpen();
     this.root.classList.remove('open');
     this.screen.classList.remove('open');
     if (this.anchor) {
@@ -225,6 +248,7 @@ MenuUI.prototype = {
     this.mouseDownAfterOpen = false;
     this.lastFocusedItem = null;
     this.anchor = null;
+    this.canceller = null;
     return new Promise((aResolve, aReject) => {
       this.closeTimeout = setTimeout(() => {
         delete this.closeTimeout;
