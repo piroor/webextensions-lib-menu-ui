@@ -6,6 +6,12 @@
 'use strict';
 
 {
+const wait = (aTimeout) => {
+  return new Promise((aResolve, aReject) => {
+    setTimeout(aResolve, aTimeout);
+  });
+};
+
 const MenuUI = function(aParams = {}) {
   this.root              = aParams.root;
   this.onCommand         = aParams.onCommand || (() => {});
@@ -129,13 +135,13 @@ MenuUI.prototype = {
         menu.style.transition = '';
       this.updatePosition(menu, aOptions);
     }
-    return new Promise((aResolve, aReject) => {
-    setTimeout(() => {
+    return new Promise(async (aResolve, aReject) => {
+      await wait(0);
       if (this.tryCancelOpen()) {
         this.close().then(aResolve);
         return;
       }
-      setTimeout(() => {
+      await wait(this.animationDuration);
         if (this.tryCancelOpen()) {
           this.close().then(aResolve);
           return;
@@ -150,8 +156,6 @@ MenuUI.prototype = {
         window.addEventListener('keyup', this.onKeyUp, { capture: true });
         window.addEventListener('blur', this.onBlur, { capture: true });
         aResolve();
-      }, this.animationDuration);
-    }, 0);
     });
   },
 
