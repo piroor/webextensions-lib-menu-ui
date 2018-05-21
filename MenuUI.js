@@ -129,14 +129,15 @@ MenuUI.prototype = {
         menu.style.transition = '';
       this.updatePosition(menu, aOptions);
     }
+    return new Promise((aResolve, aReject) => {
     setTimeout(() => {
       if (this.tryCancelOpen()) {
-        this.close();
+        this.close().then(aResolve);
         return;
       }
       setTimeout(() => {
         if (this.tryCancelOpen()) {
-          this.close();
+          this.close().then(aResolve);
           return;
         }
         this.root.parentNode.addEventListener('mouseover', this.onMouseOver);
@@ -148,8 +149,10 @@ MenuUI.prototype = {
         window.addEventListener('keydown', this.onKeyDown, { capture: true });
         window.addEventListener('keyup', this.onKeyUp, { capture: true });
         window.addEventListener('blur', this.onBlur, { capture: true });
+        aResolve();
       }, this.animationDuration);
     }, 0);
+    });
   },
 
   tryCancelOpen() {
