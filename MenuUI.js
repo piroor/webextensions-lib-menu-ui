@@ -56,6 +56,7 @@ MenuUI.prototype = {
   uniqueKey: MenuUI.uniqueKey,
   commonClass: MenuUI.commonClass,
 
+  lastHoverItem:   null,
   lastFocusedItem: null,
 
   get opened() {
@@ -104,6 +105,7 @@ MenuUI.prototype = {
     this.canceller = aOptions.canceller;
     this.mouseDownAfterOpen = false;
     this.lastFocusedItem = null;
+    this.lastHoverItem = null;
     this.anchor = aOptions.anchor;
     for (let item of Array.slice(this.root.querySelectorAll('li:not(.separator)'))) {
       item.tabIndex = 0;
@@ -254,6 +256,7 @@ MenuUI.prototype = {
     }
     this.mouseDownAfterOpen = false;
     this.lastFocusedItem = null;
+    this.lastHoverItem = null;
     this.anchor = null;
     this.canceller = null;
     return new Promise((aResolve, aReject) => {
@@ -300,7 +303,7 @@ MenuUI.prototype = {
   },
 
   onMouseOver(aEvent) {
-    const item = this.getEffectiveItem(aEvent.target);
+    let item = this.getEffectiveItem(aEvent.target);
     if (this.delayedOpen && this.delayedOpen.item != item) {
       clearTimeout(this.delayedOpen.timer);
       this.delayedOpen = null;
@@ -308,6 +311,10 @@ MenuUI.prototype = {
     if (item && item.delayedClose) {
       clearTimeout(item.delayedClose);
       item.delayedClose = null;
+    }
+    if (item && item.classList.contains('separator')) {
+      this.lastHoverItem = item;
+      item = null;
     }
     if (!item) {
       if (this.lastFocusedItem) {
@@ -381,11 +388,11 @@ MenuUI.prototype = {
 
   getEffectiveItem(aNode) {
     var target = aNode.closest('li');
-    var untransparentTarget = target;
+    var untransparentTarget = target && target.closest('ul');
     while (untransparentTarget) {
       if (parseFloat(window.getComputedStyle(untransparentTarget, null).opacity) < 1)
         return null;
-      untransparentTarget = untransparentTarget.parentNode;
+      untransparentTarget = untransparentTarget.parentNode.closest('ul');
       if (untransparentTarget == document)
         break;
     }
@@ -405,6 +412,7 @@ MenuUI.prototype = {
 
     const target = this.getEffectiveItem(aEvent.target);
     if (!target ||
+        target.classList.contains('separator') ||
         target.classList.contains('has-submenu') ||
         target.classList.contains('disabled')) {
       if (!aEvent.target.closest(`#${this.root.id}`))
@@ -417,7 +425,7 @@ MenuUI.prototype = {
 
   getNextFocusedItemByAccesskey(aKey) {
     for (let attribute of ['access-key', 'sub-access-key']) {
-      const current = this.lastFocusedItem || this.root.firstChild;
+      const current = this.lastHoverItem || this.lastFocusedItem || this.root.firstChild;
       const condition = `@data-${attribute}="${aKey.toLowerCase()}"`;
       const item = this.getNextItem(current, condition);
       if (item)
@@ -455,35 +463,45 @@ MenuUI.prototype = {
       case 'Home':
         aEvent.stopPropagation();
         aEvent.preventDefault();
-        this.advanceFocus(1, (this.lastFocusedItem && this.lastFocusedItem.parentNode || this.root).lastChild);
+        this.advanceFocus(1, (
+          this.lastHoverItem && this.lastHoverItem.parentNode ||
+          this.lastFocusedItem && this.lastFocusedItem.parentNode ||
+          this.root
+        ).lastChild);
         break;
 
       case 'End':
         aEvent.stopPropagation();
         aEvent.preventDefault();
-        this.advanceFocus(-1, (this.lastFocusedItem && this.lastFocusedItem.parentNode || this.root).firstChild);
+        this.advanceFocus(-1, (
+          this.lastHoverItem && this.lastHoverItem.parentNode ||
+          this.lastFocusedItem && this.lastFocusedItem.parentNode ||
+          this.root
+        ).firstChild);
         break;
 
-      case 'Enter':
+      case 'Enter': {
         aEvent.stopPropagation();
         aEvent.preventDefault();
-        if (this.lastFocusedItem) {
-          if (this.lastFocusedItem.classList.contains('disabled'))
+        const targetItem = this.lastHoverItem || this.lastFocusedItem;
+        if (targetItem) {
+          if (targetItem.classList.contains('disabled'))
             this.close();
-          else
-            this.onCommand(this.lastFocusedItem, aEvent);
+          else if (!targetItem.classList.contains('separator'))
+            this.onCommand(targetItem, aEvent);
         }
-        break;
+      }; break;
 
-      case 'Escape':
+      case 'Escape': {
         aEvent.stopPropagation();
         aEvent.preventDefault();
-        if (!this.lastFocusedItem ||
-            this.lastFocusedItem.parentNode == this.root)
+        const targetItem = this.lastHoverItem || this.lastFocusedItem;
+        if (!targetItem ||
+            targetItem.parentNode == this.root)
           this.close();
         else
           this.digOut();
-        break;
+      }; break;
 
       default:
         if (aEvent.key.length == 1) {
@@ -573,7 +591,7 @@ MenuUI.prototype = {
   },
 
   advanceFocus(aDirection, aLastFocused = null) {
-    aLastFocused = aLastFocused || this.lastFocusedItem;
+    aLastFocused = aLastFocused || this.lastHoverItem || this.lastFocusedItem;
     if (!aLastFocused) {
       if (aDirection < 0)
         this.lastFocusedItem = aLastFocused = this.root.firstChild;
@@ -585,6 +603,7 @@ MenuUI.prototype = {
     else
       this.lastFocusedItem = this.getNextItem(aLastFocused);
     this.lastFocusedItem.focus();
+    this.lastHoverItem = this.lastFocusedItem;
     this.setHover(null);
   },
 
@@ -602,14 +621,16 @@ MenuUI.prototype = {
   },
 
   digOut() {
-    if (!this.lastFocusedItem ||
-        this.lastFocusedItem.parentNode == this.root)
+    const targetItem = this.lastHoverItem || this.lastFocusedItem;
+    if (!targetItem ||
+        targetItem.parentNode == this.root)
       return;
-    this.closeOtherSubmenus(this.lastFocusedItem);
-    this.lastFocusedItem = this.lastFocusedItem.parentNode.parentNode;
+    this.closeOtherSubmenus(targetItem);
+    this.lastFocusedItem = targetItem.parentNode.parentNode;
     this.closeOtherSubmenus(this.lastFocusedItem);
     this.lastFocusedItem.classList.remove('open');
     this.lastFocusedItem.focus();
+    this.lastHoverItem = this.lastFocusedItem;
     this.setHover(null);
   },
 
@@ -626,6 +647,7 @@ MenuUI.prototype = {
     this.setHover(item);
     item.focus();
     this.lastFocusedItem = item;
+    this.lastHoverItem = item;
   },
 
   onContextMenu(aEvent) {
@@ -688,7 +710,6 @@ MenuUI.installStyles = function() {
       visibility: hidden;
       margin: 0;
       padding: 0;
-      pointer-events: none;
     }
 
     ${common}.menu-ui li.has-submenu {
