@@ -384,6 +384,9 @@ MenuUI.prototype = {
     aEvent.stopPropagation();
     aEvent.preventDefault();
     this.mouseDownAfterOpen = true;
+    if (/^Mac/i.test(navigator.platform) &&
+        aEvent.target.closest(`#${this.root.id}`))
+      this.onClick(aEvent);
   },
 
   getEffectiveItem(aNode) {
