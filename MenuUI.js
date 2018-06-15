@@ -284,10 +284,10 @@
     },
 
     get containerRect() {
-      var x      = 0;
-      var y      = 0;
-      var width  = window.innerWidth;
-      var height = window.innerHeight;
+      const x      = 0;
+      const y      = 0;
+      const width  = window.innerWidth;
+      const height = window.innerHeight;
       return {
         x, y, width, height,
         left:   x,
@@ -387,8 +387,8 @@
     },
 
     getEffectiveItem(aNode) {
-      var target = aNode.closest('li');
-      var untransparentTarget = target && target.closest('ul');
+      const target = aNode.closest('li');
+      let untransparentTarget = target && target.closest('ul');
       while (untransparentTarget) {
         if (parseFloat(window.getComputedStyle(untransparentTarget, null).opacity) < 1)
           return null;
@@ -859,7 +859,7 @@
     if (!aType)
       aType = XPathResult.ORDERED_NODE_SNAPSHOT_TYPE;
     try {
-      var result = (aContext.ownerDocument || aContext).evaluate(
+      const result = (aContext.ownerDocument || aContext).evaluate(
         aExpression,
         (aContext || document),
         null,
@@ -880,12 +880,12 @@
   };
 
   const getArrayFromXPathResult = (aXPathResult) => {
-    var max   = aXPathResult.snapshotLength;
-    var array = new Array(max);
+    const max   = aXPathResult.snapshotLength;
+    const array = new Array(max);
     if (!max)
       return array;
 
-    for (var i = 0; i < max; i++) {
+    for (let i = 0; i < max; i++) {
       array[i] = aXPathResult.snapshotItem(i);
     }
     return array;
