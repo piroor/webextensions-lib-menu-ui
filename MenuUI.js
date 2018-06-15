@@ -54,44 +54,44 @@
 
   class MenuUI {
     constructor(aParams = {}) {
-    this.lastHoverItem   = null;
-    this.lastFocusedItem = null;
+      this.lastHoverItem   = null;
+      this.lastFocusedItem = null;
 
-    this.root              = aParams.root;
-    this.onCommand         = aParams.onCommand || (() => {});
-    this.animationDuration = aParams.animationDuration || 150;
-    this.subMenuOpenDelay  = aParams.subMenuOpenDelay || 300;
-    this.subMenuCloseDelay = aParams.subMenuCloseDelay || 300;
-    this.appearance        = aParams.appearance || 'menu';
+      this.root              = aParams.root;
+      this.onCommand         = aParams.onCommand || (() => {});
+      this.animationDuration = aParams.animationDuration || 150;
+      this.subMenuOpenDelay  = aParams.subMenuOpenDelay || 300;
+      this.subMenuCloseDelay = aParams.subMenuCloseDelay || 300;
+      this.appearance        = aParams.appearance || 'menu';
 
-    this.onBlur            = this.onBlur.bind(this);
-    this.onMouseOver       = this.onMouseOver.bind(this);
-    this.onMouseDown       = this.onMouseDown.bind(this);
-    this.onMouseUp         = this.onMouseUp.bind(this);
-    this.onClick           = this.onClick.bind(this);
-    this.onKeyDown         = this.onKeyDown.bind(this);
-    this.onKeyUp           = this.onKeyUp.bind(this);
-    this.onTransitionEnd   = this.onTransitionEnd.bind(this);
-    this.onContextMenu     = this.onContextMenu.bind(this);
+      this.onBlur            = this.onBlur.bind(this);
+      this.onMouseOver       = this.onMouseOver.bind(this);
+      this.onMouseDown       = this.onMouseDown.bind(this);
+      this.onMouseUp         = this.onMouseUp.bind(this);
+      this.onClick           = this.onClick.bind(this);
+      this.onKeyDown         = this.onKeyDown.bind(this);
+      this.onKeyUp           = this.onKeyUp.bind(this);
+      this.onTransitionEnd   = this.onTransitionEnd.bind(this);
+      this.onContextMenu     = this.onContextMenu.bind(this);
 
-    if (!this.root.id)
-      this.root.id = `MenuUI-root-${this.uniqueKey}-${parseInt(Math.random() * Math.pow(2, 16))}`;
+      if (!this.root.id)
+        this.root.id = `MenuUI-root-${this.uniqueKey}-${parseInt(Math.random() * Math.pow(2, 16))}`;
 
-    this.root.classList.add(this.commonClass);
-    this.root.classList.add('menu-ui');
-    this.root.classList.add(this.appearance);
+      this.root.classList.add(this.commonClass);
+      this.root.classList.add('menu-ui');
+      this.root.classList.add(this.appearance);
 
-    this.screen = document.createElement('div');
-    this.screen.classList.add(this.commonClass);
-    this.screen.classList.add('menu-ui-blocking-screen');
-    this.root.parentNode.insertBefore(this.screen, this.root.nextSibling);
+      this.screen = document.createElement('div');
+      this.screen.classList.add(this.commonClass);
+      this.screen.classList.add('menu-ui-blocking-screen');
+      this.root.parentNode.insertBefore(this.screen, this.root.nextSibling);
 
-    this.marker = document.createElement('span');
-    this.marker.classList.add(this.commonClass);
-    this.marker.classList.add('menu-ui-marker');
-    this.marker.classList.add(this.appearance);
-    this.root.parentNode.insertBefore(this.marker, this.root.nextSibling);
-  }
+      this.marker = document.createElement('span');
+      this.marker.classList.add(this.commonClass);
+      this.marker.classList.add('menu-ui-marker');
+      this.marker.classList.add(this.appearance);
+      this.root.parentNode.insertBefore(this.marker, this.root.nextSibling);
+    }
 
     get opened() {
       return this.root.classList.contains('open');
@@ -692,192 +692,192 @@
 
 
     static installStyles() {
-    this.style = document.createElement('style');
-    this.style.setAttribute('type', 'text/css');
-    const common = `.${this.commonClass}`;
-    this.style.textContent = `
-    ${common}.menu-ui,
-    ${common}.menu-ui ul {
-      background-color: var(--menu-ui-background-color);
-      color: var(--menu-ui-text-color);
-      margin: 0;
-      max-height: calc(100% - 6px);
-      max-width: calc(100% - 6px);
-      opacity: 0;
-      overflow: auto;
-      padding: 0;
-      pointer-events: none;
-      position: fixed;
-      z-index: 999999;
-    }
+      this.style = document.createElement('style');
+      this.style.setAttribute('type', 'text/css');
+      const common = `.${this.commonClass}`;
+      this.style.textContent = `
+        ${common}.menu-ui,
+        ${common}.menu-ui ul {
+          background-color: var(--menu-ui-background-color);
+          color: var(--menu-ui-text-color);
+          margin: 0;
+          max-height: calc(100% - 6px);
+          max-width: calc(100% - 6px);
+          opacity: 0;
+          overflow: auto;
+          padding: 0;
+          pointer-events: none;
+          position: fixed;
+          z-index: 999999;
+        }
 
-    ${common}.menu-ui.open,
-    ${common}.menu-ui li.open > ul {
-      opacity: 1;
-      pointer-events: auto;
-    }
+        ${common}.menu-ui.open,
+        ${common}.menu-ui li.open > ul {
+          opacity: 1;
+          pointer-events: auto;
+        }
 
-    ${common}.menu-ui li {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
+        ${common}.menu-ui li {
+          list-style: none;
+          margin: 0;
+          padding: 0;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
 
-    ${common}.menu-ui li:not(.separator):focus,
-    ${common}.menu-ui li:not(.separator).open {
-      background-color: var(--menu-ui-background-color-active);
-      color: var(--menu-ui-text-color-active);
-    }
+        ${common}.menu-ui li:not(.separator):focus,
+        ${common}.menu-ui li:not(.separator).open {
+          background-color: var(--menu-ui-background-color-active);
+          color: var(--menu-ui-text-color-active);
+        }
 
-    ${common}.menu-ui li.radio.checked::before,
-    ${common}.menu-ui li.checkbox.checked::before {
-      content: "✔";
-      position: absolute;
-      left: 0.25em;
-    }
+        ${common}.menu-ui li.radio.checked::before,
+        ${common}.menu-ui li.checkbox.checked::before {
+          content: "✔";
+          position: absolute;
+          left: 0.25em;
+        }
 
-    ${common}.menu-ui li.separator {
-      height: 0.5em;
-      visibility: hidden;
-      margin: 0;
-      padding: 0;
-    }
+        ${common}.menu-ui li.separator {
+          height: 0.5em;
+          visibility: hidden;
+          margin: 0;
+          padding: 0;
+        }
 
-    ${common}.menu-ui li.has-submenu {
-      padding-right: 1.5em;
-    }
-    ${common}.menu-ui li.has-submenu::after {
-      content: "❯";
-      position: absolute;
-      right: 0.25em;
-      transform: scale(0.75);
-    }
+        ${common}.menu-ui li.has-submenu {
+          padding-right: 1.5em;
+        }
+        ${common}.menu-ui li.has-submenu::after {
+          content: "❯";
+          position: absolute;
+          right: 0.25em;
+          transform: scale(0.75);
+        }
 
-    ${common}.menu-ui .accesskey {
-      text-decoration: underline;
-    }
+        ${common}.menu-ui .accesskey {
+          text-decoration: underline;
+        }
 
-    ${common}.menu-ui-blocking-screen {
-      display: none;
-    }
+        ${common}.menu-ui-blocking-screen {
+          display: none;
+        }
 
-    ${common}.menu-ui-blocking-screen.open {
-      bottom: 0;
-      display: block;
-      left: 0;
-      position: fixed;
-      right: 0;
-      top: 0;
-      z-index: 899999;
-    }
+        ${common}.menu-ui-blocking-screen.open {
+          bottom: 0;
+          display: block;
+          left: 0;
+          position: fixed;
+          right: 0;
+          top: 0;
+          z-index: 899999;
+        }
 
-    ${common}.menu-ui.menu li:not(.separator):focus,
-    ${common}.menu-ui.menu li:not(.separator).open {
-      outline: none;
-    }
+        ${common}.menu-ui.menu li:not(.separator):focus,
+        ${common}.menu-ui.menu li:not(.separator).open {
+          outline: none;
+        }
 
-    ${common}.menu-ui.panel li:not(.separator):focus ul li:not(:focus):not(.open),
-    ${common}.menu-ui.panel li:not(.separator).open ul li:not(:focus):not(.open) {
-      background-color: transparent;
-      color: var(--menu-ui-text-color);
-    }
+        ${common}.menu-ui.panel li:not(.separator):focus ul li:not(:focus):not(.open),
+        ${common}.menu-ui.panel li:not(.separator).open ul li:not(:focus):not(.open) {
+          background-color: transparent;
+          color: var(--menu-ui-text-color);
+        }
 
-    ${common}.menu-ui-marker {
-      opacity: 0;
-      pointer-events: none;
-      position: fixed;
-    }
+        ${common}.menu-ui-marker {
+          opacity: 0;
+          pointer-events: none;
+          position: fixed;
+        }
 
-    ${common}.menu-ui-marker.open {
-      border: 0.5em solid transparent;
-      content: "";
-      height: 0;
-      left: 0;
-      opacity: 1;
-      top: 0;
-      width: 0;
-      z-index: 999999;
-    }
+        ${common}.menu-ui-marker.open {
+          border: 0.5em solid transparent;
+          content: "";
+          height: 0;
+          left: 0;
+          opacity: 1;
+          top: 0;
+          width: 0;
+          z-index: 999999;
+        }
 
-    ${common}.menu-ui-marker.top {
-      border-bottom: 0.5em solid var(--menu-ui-background-color);
-    }
-    ${common}.menu-ui-marker.bottom {
-      border-top: 0.5em solid var(--menu-ui-background-color);
-    }
+        ${common}.menu-ui-marker.top {
+          border-bottom: 0.5em solid var(--menu-ui-background-color);
+        }
+        ${common}.menu-ui-marker.bottom {
+          border-top: 0.5em solid var(--menu-ui-background-color);
+        }
 
-    ${common}.menu-ui li.disabled {
-      opacity: 0.5;
-    }
+        ${common}.menu-ui li.disabled {
+          opacity: 0.5;
+        }
 
-    ${common}.menu-ui li[data-icon] {
-      background-position: left center;
-      background-repeat: no-repeat;
-      background-size: 16px;
-    }
+        ${common}.menu-ui li[data-icon] {
+          background-position: left center;
+          background-repeat: no-repeat;
+          background-size: 16px;
+        }
 
-    /* panel-like appearance */
-    ${common}.panel {
-      --menu-ui-background-color: -moz-dialog;
-      --menu-ui-text-color: -moz-dialogtext;
-      --menu-ui-background-color-active: Highlight;
-      --menu-ui-text-color-active: HighlightText;
-    }
-    ${common}.panel li.disabled {
-      --menu-ui-background-color-active: InactiveCaptionText;
-      --menu-ui-text-color-active: InactiveCaption;
-    }
-    ${common}.menu-ui.panel,
-    ${common}.menu-ui.panel ul {
-      box-shadow: 0.1em 0.1em 0.8em rgba(0, 0, 0, 0.65);
-      padding: 0.25em 0;
-    }
+        /* panel-like appearance */
+        ${common}.panel {
+          --menu-ui-background-color: -moz-dialog;
+          --menu-ui-text-color: -moz-dialogtext;
+          --menu-ui-background-color-active: Highlight;
+          --menu-ui-text-color-active: HighlightText;
+        }
+        ${common}.panel li.disabled {
+          --menu-ui-background-color-active: InactiveCaptionText;
+          --menu-ui-text-color-active: InactiveCaption;
+        }
+        ${common}.menu-ui.panel,
+        ${common}.menu-ui.panel ul {
+          box-shadow: 0.1em 0.1em 0.8em rgba(0, 0, 0, 0.65);
+          padding: 0.25em 0;
+        }
 
-    ${common}.menu-ui.panel li {
-      padding: 0.15em 1em;
-    }
+        ${common}.menu-ui.panel li {
+          padding: 0.15em 1em;
+        }
 
 
-    /* Menu-like appearance */
-    ${common}.menu {
-      --menu-ui-background-color: Menu;
-      --menu-ui-text-color: MenuText;
-      --menu-ui-background-color-active: Highlight;
-      --menu-ui-text-color-active: HighlightText;
-    }
-    ${common}.menu li.disabled {
-      --menu-ui-background-color-active: InactiveCaptionText;
-      --menu-ui-text-color-active: InactiveCaption;
-    }
-    ${common}.menu-ui.menu,
-    ${common}.menu-ui.menu ul {
-      border: 1px outset Menu;
-      box-shadow: 0.1em 0.1em 0.5em rgba(0, 0, 0, 0.65);
-      font: -moz-pull-down-menu;
-    }
+        /* Menu-like appearance */
+        ${common}.menu {
+          --menu-ui-background-color: Menu;
+          --menu-ui-text-color: MenuText;
+          --menu-ui-background-color-active: Highlight;
+          --menu-ui-text-color-active: HighlightText;
+        }
+        ${common}.menu li.disabled {
+          --menu-ui-background-color-active: InactiveCaptionText;
+          --menu-ui-text-color-active: InactiveCaption;
+        }
+        ${common}.menu-ui.menu,
+        ${common}.menu-ui.menu ul {
+          border: 1px outset Menu;
+          box-shadow: 0.1em 0.1em 0.5em rgba(0, 0, 0, 0.65);
+          font: -moz-pull-down-menu;
+        }
 
-    ${common}.menu-ui.menu li {
-      padding: 0.15em 0.5em 0.15em 1.5em;
-    }
+        ${common}.menu-ui.menu li {
+          padding: 0.15em 0.5em 0.15em 1.5em;
+        }
 
-    ${common}.menu-ui.menu li.separator {
-      border: 1px inset Menu;
-      height: 0;
-      margin: 0 0.5em;
-      max-height: 0;
-      opacity: 0.5;
-      padding: 0;
-      visibility: visible;
-    }
+        ${common}.menu-ui.menu li.separator {
+          border: 1px inset Menu;
+          height: 0;
+          margin: 0 0.5em;
+          max-height: 0;
+          opacity: 0.5;
+          padding: 0;
+          visibility: visible;
+        }
 
-    ${common}.menu-ui.menu li[data-icon] {
-      background-position: calc(1em - 16px + 0.5em) center;
-    }
-  `;
-    document.head.appendChild(this.style);
+        ${common}.menu-ui.menu li[data-icon] {
+          background-position: calc(1em - 16px + 0.5em) center;
+        }
+      `;
+      document.head.appendChild(this.style);
     }
   };
 
