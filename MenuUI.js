@@ -12,6 +12,46 @@
     });
   };
 
+  // XPath Utilities
+  const hasClass = (aClassName) => {
+    return `contains(concat(" ", normalize-space(@class), " "), " ${aClassName} ")`;
+  };
+
+  const evaluateXPath = (aExpression, aContext, aType) => {
+    if (!aType)
+      aType = XPathResult.ORDERED_NODE_SNAPSHOT_TYPE;
+    try {
+      return (aContext.ownerDocument || aContext).evaluate(
+        aExpression,
+        (aContext || document),
+        null,
+        aType,
+        null
+      );
+    }
+    catch(_e) {
+      return {
+        singleNodeValue: null,
+        snapshotLength:  0,
+        snapshotItem:    function() {
+          return null
+        }
+      };
+    }
+  };
+
+  const getArrayFromXPathResult = (aXPathResult) => {
+    const max   = aXPathResult.snapshotLength;
+    const array = new Array(max);
+    if (!max)
+      return array;
+
+    for (let i = 0; i < max; i++) {
+      array[i] = aXPathResult.snapshotItem(i);
+    }
+    return array;
+  };
+
   const MenuUI = function(aParams = {}) {
     this.root              = aParams.root;
     this.onCommand         = aParams.onCommand || (() => {});
@@ -849,44 +889,4 @@
   MenuUI.installStyles();
 
   window.MenuUI = MenuUI;
-
-  // XPath Utilities
-  const hasClass = (aClassName) => {
-    return `contains(concat(" ", normalize-space(@class), " "), " ${aClassName} ")`;
-  };
-
-  const evaluateXPath = (aExpression, aContext, aType) => {
-    if (!aType)
-      aType = XPathResult.ORDERED_NODE_SNAPSHOT_TYPE;
-    try {
-      return (aContext.ownerDocument || aContext).evaluate(
-        aExpression,
-        (aContext || document),
-        null,
-        aType,
-        null
-      );
-    }
-    catch(_e) {
-      return {
-        singleNodeValue: null,
-        snapshotLength:  0,
-        snapshotItem:    function() {
-          return null
-        }
-      };
-    }
-  };
-
-  const getArrayFromXPathResult = (aXPathResult) => {
-    const max   = aXPathResult.snapshotLength;
-    const array = new Array(max);
-    if (!max)
-      return array;
-
-    for (let i = 0; i < max; i++) {
-      array[i] = aXPathResult.snapshotItem(i);
-    }
-    return array;
-  };
 }
