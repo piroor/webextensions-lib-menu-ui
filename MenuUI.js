@@ -141,7 +141,7 @@
       this.lastFocusedItem = null;
       this.lastHoverItem = null;
       this.anchor = aOptions.anchor;
-      for (const item of Array.slice(this.root.querySelectorAll('li:not(.separator)'))) {
+      for (const item of Array.from(this.root.querySelectorAll('li:not(.separator)'))) {
         item.tabIndex = 0;
         item.classList.remove('open');
         this.updateAccessKey(item);
@@ -163,7 +163,7 @@
         this.marker.style.transition = `opacity ${this.animationDuration}ms ease-out`;
         this.marker.classList.add('open');
       }
-      const menus = [this.root].concat(Array.slice(this.root.querySelectorAll('ul')));
+      const menus = [this.root].concat(Array.from(this.root.querySelectorAll('ul')));
       for (const menu of menus) {
         if (this.animationDuration)
           menu.style.transition = `opacity ${this.animationDuration}ms ease-out`;
@@ -302,7 +302,7 @@
       });
     }
     onClosed() {
-      const menus = [this.root].concat(Array.slice(this.root.querySelectorAll('ul')));
+      const menus = [this.root].concat(Array.from(this.root.querySelectorAll('ul')));
       for (const menu of menus) {
         this.updatePosition(menu, { left: 0, right: 0 });
       }
@@ -380,7 +380,7 @@
     }
 
     setHover(aItem) {
-      for (const item of Array.slice(this.root.querySelectorAll('li.hover'))) {
+      for (const item of Array.from(this.root.querySelectorAll('li.hover'))) {
         if (item != aItem)
           item.classList.remove('hover');
       }
