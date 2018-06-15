@@ -7,7 +7,7 @@
 
 {
   const wait = (aTimeout) => {
-    return new Promise((aResolve, aReject) => {
+    return new Promise((aResolve, _aReject) => {
       setTimeout(aResolve, aTimeout);
     });
   };
@@ -137,7 +137,7 @@
           menu.style.transition = '';
         this.updatePosition(menu, aOptions);
       }
-      return new Promise(async (aResolve, aReject) => {
+      return new Promise(async (aResolve, _aReject) => {
         await wait(0);
         if (this.tryCancelOpen()) {
           this.close().then(aResolve);
@@ -167,7 +167,7 @@
       try {
         return this.canceller();
       }
-      catch(e) {
+      catch(_e) {
       }
       return false;
     },
@@ -259,7 +259,7 @@
       this.lastHoverItem = null;
       this.anchor = null;
       this.canceller = null;
-      return new Promise((aResolve, aReject) => {
+      return new Promise((aResolve, _aReject) => {
         this.closeTimeout = setTimeout(() => {
           delete this.closeTimeout;
           this.onClosed();
@@ -859,7 +859,7 @@
     if (!aType)
       aType = XPathResult.ORDERED_NODE_SNAPSHOT_TYPE;
     try {
-      const result = (aContext.ownerDocument || aContext).evaluate(
+      return (aContext.ownerDocument || aContext).evaluate(
         aExpression,
         (aContext || document),
         null,
@@ -867,7 +867,7 @@
         null
       );
     }
-    catch(e) {
+    catch(_e) {
       return {
         singleNodeValue: null,
         snapshotLength:  0,
@@ -876,7 +876,6 @@
         }
       };
     }
-    return result;
   };
 
   const getArrayFromXPathResult = (aXPathResult) => {
