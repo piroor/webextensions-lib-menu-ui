@@ -52,7 +52,11 @@
     return array;
   };
 
-  const MenuUI = function(aParams = {}) {
+  class MenuUI {
+    constructor(aParams = {}) {
+    this.lastHoverItem   = null;
+    this.lastFocusedItem = null;
+
     this.root              = aParams.root;
     this.onCommand         = aParams.onCommand || (() => {});
     this.animationDuration = aParams.animationDuration || 150;
@@ -87,21 +91,11 @@
     this.marker.classList.add('menu-ui-marker');
     this.marker.classList.add(this.appearance);
     this.root.parentNode.insertBefore(this.marker, this.root.nextSibling);
-  };
-
-  MenuUI.uniqueKey = parseInt(Math.random() * Math.pow(2, 16));
-  MenuUI.commonClass = `menu-ui-${MenuUI.uniqueKey}`;
-
-  MenuUI.prototype = {
-    uniqueKey: MenuUI.uniqueKey,
-    commonClass: MenuUI.commonClass,
-
-    lastHoverItem:   null,
-    lastFocusedItem: null,
+  }
 
     get opened() {
       return this.root.classList.contains('open');
-    },
+    }
 
     updateAccessKey(aItem) {
       const ACCESS_KEY_MATCHER = /(&([^\s]))/i;
@@ -134,9 +128,9 @@
         aItem.dataset.subAccessKey = RegExp.$1.toLowerCase();
       else
         aItem.dataset.accessKey = aItem.dataset.subAccessKey = null;
-    },
+    }
 
-    open: async function(aOptions = {}) {
+    async open(aOptions = {}) {
       if (this.closeTimeout) {
         clearTimeout(this.closeTimeout);
         delete this.closeTimeout;
@@ -199,7 +193,7 @@
         window.addEventListener('blur', this.onBlur, { capture: true });
         aResolve();
       });
-    },
+    }
 
     tryCancelOpen() {
       if (!(typeof this.canceller == 'function'))
@@ -210,7 +204,7 @@
       catch(_e) {
       }
       return false;
-    },
+    }
 
     updatePosition(aMenu, aOptions = {}) {
       let left = aOptions.left;
@@ -282,9 +276,9 @@
         aMenu.style.top = `calc(${top}px - 0.5em)`;
       else
         aMenu.style.top = `${top}px`;
-    },
+    }
 
-    close: async function() {
+    async close() {
       if (!this.opened)
         return;
       this.tryCancelOpen();
@@ -306,7 +300,7 @@
           aResolve();
         }, this.animationDuration);
       });
-    },
+    }
     onClosed() {
       const menus = [this.root].concat(Array.slice(this.root.querySelectorAll('ul')));
       for (const menu of menus) {
@@ -321,7 +315,7 @@
       window.removeEventListener('keydown', this.onKeyDown, { capture: true });
       window.removeEventListener('keyup', this.onKeyUp, { capture: true });
       window.removeEventListener('blur', this.onBlur, { capture: true });
-    },
+    }
 
     get containerRect() {
       const x      = 0;
@@ -335,12 +329,12 @@
         right:  width,
         bottom: height
       };
-    },
+    }
 
     onBlur(aEvent) {
       if (aEvent.target == document)
         this.close();
-    },
+    }
 
     onMouseOver(aEvent) {
       let item = this.getEffectiveItem(aEvent.target);
@@ -383,7 +377,7 @@
           this.openSubmenuFor(item);
         }, this.subMenuOpenDelay)
       };
-    },
+    }
 
     setHover(aItem) {
       for (const item of Array.slice(this.root.querySelectorAll('li.hover'))) {
@@ -392,7 +386,7 @@
       }
       if (aItem)
         aItem.classList.add('hover');
-    },
+    }
 
     openSubmenuFor(aItem) {
       const items = evaluateXPath(
@@ -402,7 +396,7 @@
       for (const item of getArrayFromXPathResult(items)) {
         item.classList.add('open');
       }
-    },
+    }
 
     closeOtherSubmenus(aItem) {
       const items = evaluateXPath(
@@ -417,14 +411,14 @@
           item.classList.remove('open');
         }, this.subMenuCloseDelay);
       }
-    },
+    }
 
     onMouseDown(aEvent) {
       aEvent.stopImmediatePropagation();
       aEvent.stopPropagation();
       aEvent.preventDefault();
       this.mouseDownAfterOpen = true;
-    },
+    }
 
     getEffectiveItem(aNode) {
       const target = aNode.closest('li');
@@ -437,15 +431,15 @@
           break;
       }
       return target;
-    },
+    }
 
     onMouseUp(aEvent) {
       if (!this.mouseDownAfterOpen &&
         aEvent.target.closest(`#${this.root.id}`))
         this.onClick(aEvent);
-    },
+    }
 
-    onClick: async function(aEvent) {
+    async onClick(aEvent) {
       aEvent.stopImmediatePropagation();
       aEvent.stopPropagation();
       aEvent.preventDefault();
@@ -461,7 +455,7 @@
       }
 
       this.onCommand(target, aEvent);
-    },
+    }
 
     getNextFocusedItemByAccesskey(aKey) {
       for (const attribute of ['access-key', 'sub-access-key']) {
@@ -472,7 +466,7 @@
           return item;
       }
       return null;
-    },
+    }
 
     onKeyDown(aEvent) {
       switch (aEvent.key) {
@@ -556,7 +550,7 @@
           }
           return;
       }
-    },
+    }
 
     onKeyUp(aEvent) {
       switch (aEvent.key) {
@@ -580,7 +574,7 @@
           }
           return;
       }
-    },
+    }
 
     getPreviousItem(aBase, aCondition = '') {
       const extraCondition = aCondition ? `[${aCondition}]` : '' ;
@@ -604,7 +598,7 @@
       if (window.getComputedStyle(item, null).display == 'none')
         return this.getPreviousItem(item, aCondition);
       return item;
-    },
+    }
 
     getNextItem(aBase, aCondition = '') {
       const extraCondition = aCondition ? `[${aCondition}]` : '' ;
@@ -628,7 +622,7 @@
       if (item && window.getComputedStyle(item, null).display == 'none')
         return this.getNextItem(item, aCondition);
       return item;
-    },
+    }
 
     advanceFocus(aDirection, aLastFocused = null) {
       aLastFocused = aLastFocused || this.lastHoverItem || this.lastFocusedItem;
@@ -645,7 +639,7 @@
       this.lastFocusedItem.focus();
       this.lastHoverItem = this.lastFocusedItem;
       this.setHover(null);
-    },
+    }
 
     digIn() {
       if (!this.lastFocusedItem) {
@@ -658,7 +652,7 @@
       this.closeOtherSubmenus(this.lastFocusedItem);
       this.openSubmenuFor(this.lastFocusedItem);
       this.advanceFocus(1, submenu.lastChild);
-    },
+    }
 
     digOut() {
       const targetItem = this.lastHoverItem || this.lastFocusedItem;
@@ -672,7 +666,7 @@
       this.lastFocusedItem.focus();
       this.lastHoverItem = this.lastFocusedItem;
       this.setHover(null);
-    },
+    }
 
     onTransitionEnd(aEvent) {
       const hoverItems = this.root.querySelectorAll('li:hover');
@@ -688,16 +682,16 @@
       item.focus();
       this.lastFocusedItem = item;
       this.lastHoverItem = item;
-    },
+    }
 
     onContextMenu(aEvent) {
       aEvent.stopImmediatePropagation();
       aEvent.stopPropagation();
       aEvent.preventDefault();
     }
-  };
 
-  MenuUI.installStyles = function() {
+
+    static installStyles() {
     this.style = document.createElement('style');
     this.style.setAttribute('type', 'text/css');
     const common = `.${this.commonClass}`;
@@ -884,7 +878,14 @@
     }
   `;
     document.head.appendChild(this.style);
+    }
   };
+
+  MenuUI.uniqueKey   = parseInt(Math.random() * Math.pow(2, 16));
+  MenuUI.commonClass = `menu-ui-${MenuUI.uniqueKey}`;
+
+  MenuUI.prototype.uniqueKey   = MenuUI.uniqueKey;
+  MenuUI.prototype.commonClass = MenuUI.commonClass;
 
   MenuUI.installStyles();
 
