@@ -72,6 +72,8 @@ Here is the list of parameters for the `MenuUI` constructor:
 
  * `root` (required): The top-level list to become a menu. (`Element`)
  * `onCommand` (required): The handler for click event on a menu item. (`Function`)
+ * `onShown` (optional): The handler called when the menu is shown (opened). (`Function`)
+ * `onHidden` (optional): The handler called when the menu is hidden (closed). (`Function`)
  * `appearance` (optional): The visual style of the menu. (`String`, default is `menu`.) Possible values:
    - `menu`: similar to native menu UI.
    - `panel`: similar to popup panel UI.

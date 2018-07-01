@@ -59,6 +59,8 @@
 
       this.root              = aParams.root;
       this.onCommand         = aParams.onCommand || (() => {});
+      this.onShown           = aParams.onShown || (() => {});
+      this.onHidden          = aParams.onHidden || (() => {});
       this.animationDuration = aParams.animationDuration || 150;
       this.subMenuOpenDelay  = aParams.subMenuOpenDelay || 300;
       this.subMenuCloseDelay = aParams.subMenuCloseDelay || 300;
@@ -171,6 +173,7 @@
           menu.style.transition = '';
         this.updatePosition(menu, aOptions);
       }
+      this.onShown();
       return new Promise(async (aResolve, _aReject) => {
         await wait(0);
         if (this.tryCancelOpen()) {
@@ -315,6 +318,7 @@
       window.removeEventListener('keydown', this.onKeyDown, { capture: true });
       window.removeEventListener('keyup', this.onKeyUp, { capture: true });
       window.removeEventListener('blur', this.onBlur, { capture: true });
+      this.onHidden();
     }
 
     get containerRect() {
