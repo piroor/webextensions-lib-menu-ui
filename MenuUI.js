@@ -147,10 +147,28 @@
         item.tabIndex = 0;
         item.classList.remove('open');
         this.updateAccessKey(item);
-        if (item.dataset.icon)
-          item.style.backgroundImage = `url(${JSON.stringify(item.dataset.icon)})`;
-        else
-          item.style.backgroundImage = '';
+        const icon = item.querySelector('span.icon') || document.createElement('span');
+        if (!icon.parentNode) {
+          icon.classList.add('icon');
+          item.insertBefore(icon, item.firstChild);
+        }
+        if (item.dataset.icon) {
+          if (item.dataset.iconColor) {
+            item.style.backgroundImage = '';
+            icon.style.backgroundColor = item.dataset.iconColor;
+            icon.style.mask            = `url(${JSON.stringify(item.dataset.icon)}) no-repeat center / 100%`;
+          }
+          else {
+            item.style.backgroundImage = `url(${JSON.stringify(item.dataset.icon)})`;
+            icon.style.backgroundColor =
+              icon.style.mask = '';
+          }
+        }
+        else {
+          item.style.backgroundImage =
+            icon.style.backgroundColor =
+            icon.style.mask = '';
+        }
         if (item.querySelector('ul'))
           item.classList.add('has-submenu');
         else
@@ -877,8 +895,23 @@
           visibility: visible;
         }
 
-        ${common}.menu-ui.menu li[data-icon] {
+        ${common}.menu-ui.menu li[data-icon]:not([data-icon-color]) {
           background-position: calc(1em - 16px + 0.5em) center;
+        }
+
+        ${common}.menu-ui li[data-icon]:not([data-icon-color]) .icon {
+          display: none;
+        }
+
+        ${common}.menu-ui li[data-icon][data-icon-color] .icon {
+          display: inline-block;
+          height: 1em;
+          left: 0.5em;
+          max-height: 1em;
+          max-width: 1em;
+          position: absolute;
+          margin-top: 0.15em;
+          width: 1em;
         }
       `;
       document.head.appendChild(this.style);
