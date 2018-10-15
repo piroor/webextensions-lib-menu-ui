@@ -6,26 +6,26 @@
 'use strict';
 
 {
-  const wait = (aTimeout) => {
-    return new Promise((aResolve, _aReject) => {
-      setTimeout(aResolve, aTimeout);
+  const wait = (timeout) => {
+    return new Promise((resolve, _reject) => {
+      setTimeout(resolve, timeout);
     });
   };
 
   // XPath Utilities
-  const hasClass = (aClassName) => {
-    return `contains(concat(" ", normalize-space(@class), " "), " ${aClassName} ")`;
+  const hasClass = (className) => {
+    return `contains(concat(" ", normalize-space(@class), " "), " ${className} ")`;
   };
 
-  const evaluateXPath = (aExpression, aContext, aType) => {
-    if (!aType)
-      aType = XPathResult.ORDERED_NODE_SNAPSHOT_TYPE;
+  const evaluateXPath = (expression, context, type) => {
+    if (!type)
+      type = XPathResult.ORDERED_NODE_SNAPSHOT_TYPE;
     try {
-      return (aContext.ownerDocument || aContext).evaluate(
-        aExpression,
-        (aContext || document),
+      return (context.ownerDocument || context).evaluate(
+        expression,
+        (context || document),
         null,
-        aType,
+        type,
         null
       );
     }
@@ -40,31 +40,31 @@
     }
   };
 
-  const getArrayFromXPathResult = (aXPathResult) => {
-    const max   = aXPathResult.snapshotLength;
+  const getArrayFromXPathResult = (result) => {
+    const max   = result.snapshotLength;
     const array = new Array(max);
     if (!max)
       return array;
 
     for (let i = 0; i < max; i++) {
-      array[i] = aXPathResult.snapshotItem(i);
+      array[i] = result.snapshotItem(i);
     }
     return array;
   };
 
   class MenuUI {
-    constructor(aParams = {}) {
+    constructor(params = {}) {
       this.lastHoverItem   = null;
       this.lastFocusedItem = null;
 
-      this.root              = aParams.root;
-      this.onCommand         = aParams.onCommand || (() => {});
-      this.onShown           = aParams.onShown || (() => {});
-      this.onHidden          = aParams.onHidden || (() => {});
-      this.animationDuration = aParams.animationDuration || 150;
-      this.subMenuOpenDelay  = aParams.subMenuOpenDelay || 300;
-      this.subMenuCloseDelay = aParams.subMenuCloseDelay || 300;
-      this.appearance        = aParams.appearance || 'menu';
+      this.root              = params.root;
+      this.onCommand         = params.onCommand || (() => {});
+      this.onShown           = params.onShown || (() => {});
+      this.onHidden          = params.onHidden || (() => {});
+      this.animationDuration = params.animationDuration || 150;
+      this.subMenuOpenDelay  = params.subMenuOpenDelay || 300;
+      this.subMenuCloseDelay = params.subMenuCloseDelay || 300;
+      this.appearance        = params.appearance || 'menu';
 
       this.onBlur            = this.onBlur.bind(this);
       this.onMouseOver       = this.onMouseOver.bind(this);
@@ -99,17 +99,17 @@
       return this.root.classList.contains('open');
     }
 
-    updateAccessKey(aItem) {
+    updateAccessKey(item) {
       const ACCESS_KEY_MATCHER = /(&([^\s]))/i;
-      const title = aItem.getAttribute('title');
+      const title = item.getAttribute('title');
       if (title)
-        aItem.setAttribute('title', title.replace(ACCESS_KEY_MATCHER, '$2'));
-      const label = evaluateXPath('child::text()', aItem, XPathResult.STRING_TYPE).stringValue;
+        item.setAttribute('title', title.replace(ACCESS_KEY_MATCHER, '$2'));
+      const label = evaluateXPath('child::text()', item, XPathResult.STRING_TYPE).stringValue;
       const matchedKey = label.match(ACCESS_KEY_MATCHER);
       if (matchedKey) {
         const textNode = evaluateXPath(
           `child::node()[contains(self::text(), "${matchedKey[1]}")]`,
-          aItem,
+          item,
           XPathResult.FIRST_ORDERED_NODE_TYPE
         ).singleNodeValue;
         if (textNode) {
@@ -124,25 +124,25 @@
           range.insertNode(accessKeyNode);
           range.detach();
         }
-        aItem.dataset.accessKey = matchedKey[2].toLowerCase();
+        item.dataset.accessKey = matchedKey[2].toLowerCase();
       }
-      else if (/^([^\s])/i.test(aItem.textContent))
-        aItem.dataset.subAccessKey = RegExp.$1.toLowerCase();
+      else if (/^([^\s])/i.test(item.textContent))
+        item.dataset.subAccessKey = RegExp.$1.toLowerCase();
       else
-        aItem.dataset.accessKey = aItem.dataset.subAccessKey = null;
+        item.dataset.accessKey = item.dataset.subAccessKey = null;
     }
 
-    async open(aOptions = {}) {
+    async open(options = {}) {
       if (this.closeTimeout) {
         clearTimeout(this.closeTimeout);
         delete this.closeTimeout;
         this.onClosed();
       }
-      this.canceller = aOptions.canceller;
+      this.canceller = options.canceller;
       this.mouseDownAfterOpen = false;
       this.lastFocusedItem = null;
       this.lastHoverItem = null;
-      this.anchor = aOptions.anchor;
+      this.anchor = options.anchor;
       for (const item of Array.from(this.root.querySelectorAll('li:not(.separator)'))) {
         item.tabIndex = 0;
         item.classList.remove('open');
@@ -189,18 +189,18 @@
           menu.style.transition = `opacity ${this.animationDuration}ms ease-out`;
         else
           menu.style.transition = '';
-        this.updatePosition(menu, aOptions);
+        this.updatePosition(menu, options);
       }
       this.onShown();
-      return new Promise(async (aResolve, _aReject) => {
+      return new Promise(async (resolve, _reject) => {
         await wait(0);
         if (this.tryCancelOpen()) {
-          this.close().then(aResolve);
+          this.close().then(resolve);
           return;
         }
         await wait(this.animationDuration);
         if (this.tryCancelOpen()) {
-          this.close().then(aResolve);
+          this.close().then(resolve);
           return;
         }
         this.root.parentNode.addEventListener('mouseover', this.onMouseOver);
@@ -212,7 +212,7 @@
         window.addEventListener('keydown', this.onKeyDown, { capture: true });
         window.addEventListener('keyup', this.onKeyUp, { capture: true });
         window.addEventListener('blur', this.onBlur, { capture: true });
-        aResolve();
+        resolve();
       });
     }
 
@@ -227,15 +227,15 @@
       return false;
     }
 
-    updatePosition(aMenu, aOptions = {}) {
-      let left = aOptions.left;
-      let top  = aOptions.top;
+    updatePosition(menu, options = {}) {
+      let left = options.left;
+      let top  = options.top;
       const containerRect = this.containerRect;
-      const menuRect      = aMenu.getBoundingClientRect();
+      const menuRect      = menu.getBoundingClientRect();
 
-      if (aOptions.anchor &&
+      if (options.anchor &&
         (left === undefined || top === undefined)) {
-        const anchorRect = aOptions.anchor.getBoundingClientRect();
+        const anchorRect = options.anchor.getBoundingClientRect();
         if (containerRect.bottom - anchorRect.bottom >= menuRect.height) {
           top = anchorRect.bottom;
           this.marker.classList.add('top');
@@ -266,8 +266,8 @@
         }
       }
 
-      if (aMenu.parentNode.localName == 'li') {
-        const parentRect = aMenu.parentNode.getBoundingClientRect();
+      if (menu.parentNode.localName == 'li') {
+        const parentRect = menu.parentNode.getBoundingClientRect();
         left = parentRect.right;
         top  = parentRect.top;
       }
@@ -277,7 +277,7 @@
       if (top === undefined)
         top = Math.max(0, (containerRect.height - menuRect.height) / 2);
 
-      if (!aOptions.anchor && aMenu == this.root) {
+      if (!options.anchor && menu == this.root) {
       // reposition to avoid the menu is opened below the cursor
         if (containerRect.bottom - top < menuRect.height) {
           top = top - menuRect.height;
@@ -290,13 +290,13 @@
       const minMargin = 3;
       left = Math.max(minMargin, Math.min(left, containerRect.width - menuRect.width - minMargin));
       top  = Math.max(minMargin, Math.min(top,  containerRect.height - menuRect.height - minMargin));
-      aMenu.style.left = `${left}px`;
-      if (aMenu == this.root && this.marker.classList.contains('top'))
-        aMenu.style.top = `calc(${top}px + 0.5em)`;
-      else if (aMenu == this.root && this.marker.classList.contains('bottom'))
-        aMenu.style.top = `calc(${top}px - 0.5em)`;
+      menu.style.left = `${left}px`;
+      if (menu == this.root && this.marker.classList.contains('top'))
+        menu.style.top = `calc(${top}px + 0.5em)`;
+      else if (menu == this.root && this.marker.classList.contains('bottom'))
+        menu.style.top = `calc(${top}px - 0.5em)`;
       else
-        aMenu.style.top = `${top}px`;
+        menu.style.top = `${top}px`;
     }
 
     async close() {
@@ -314,11 +314,11 @@
       this.lastHoverItem = null;
       this.anchor = null;
       this.canceller = null;
-      return new Promise((aResolve, _aReject) => {
+      return new Promise((resolve, _reject) => {
         this.closeTimeout = setTimeout(() => {
           delete this.closeTimeout;
           this.onClosed();
-          aResolve();
+          resolve();
         }, this.animationDuration);
       });
     }
@@ -353,13 +353,13 @@
       };
     }
 
-    onBlur(aEvent) {
-      if (aEvent.target == document)
+    onBlur(event) {
+      if (event.target == document)
         this.close();
     }
 
-    onMouseOver(aEvent) {
-      let item = this.getEffectiveItem(aEvent.target);
+    onMouseOver(event) {
+      let item = this.getEffectiveItem(event.target);
       if (this.delayedOpen && this.delayedOpen.item != item) {
         clearTimeout(this.delayedOpen.timer);
         this.delayedOpen = null;
@@ -401,32 +401,32 @@
       };
     }
 
-    setHover(aItem) {
+    setHover(item) {
       for (const item of Array.from(this.root.querySelectorAll('li.hover'))) {
-        if (item != aItem)
+        if (item != item)
           item.classList.remove('hover');
       }
-      if (aItem)
-        aItem.classList.add('hover');
+      if (item)
+        item.classList.add('hover');
     }
 
-    openSubmenuFor(aItem) {
+    openSubmenuFor(item) {
       const items = evaluateXPath(
         `ancestor-or-self::li[${hasClass('has-submenu')}]`,
-        aItem
+        item
       );
       for (const item of getArrayFromXPathResult(items)) {
         item.classList.add('open');
       }
     }
 
-    closeOtherSubmenus(aItem) {
+    closeOtherSubmenus(item) {
       const items = evaluateXPath(
         `preceding-sibling::li[${hasClass('has-submenu')}] |
        following-sibling::li[${hasClass('has-submenu')}] |
        preceding-sibling::li/descendant::li[${hasClass('has-submenu')}] |
        following-sibling::li/descendant::li[${hasClass('has-submenu')}]`,
-        aItem
+        item
       );
       for (const item of getArrayFromXPathResult(items)) {
         item.delayedClose = setTimeout(() => {
@@ -435,15 +435,15 @@
       }
     }
 
-    onMouseDown(aEvent) {
-      aEvent.stopImmediatePropagation();
-      aEvent.stopPropagation();
-      aEvent.preventDefault();
+    onMouseDown(event) {
+      event.stopImmediatePropagation();
+      event.stopPropagation();
+      event.preventDefault();
       this.mouseDownAfterOpen = true;
     }
 
-    getEffectiveItem(aNode) {
-      const target = aNode.closest('li');
+    getEffectiveItem(node) {
+      const target = node.closest('li');
       let untransparentTarget = target && target.closest('ul');
       while (untransparentTarget) {
         if (parseFloat(window.getComputedStyle(untransparentTarget, null).opacity) < 1)
@@ -455,34 +455,34 @@
       return target;
     }
 
-    onMouseUp(aEvent) {
+    onMouseUp(event) {
       if (!this.mouseDownAfterOpen &&
-        aEvent.target.closest(`#${this.root.id}`))
-        this.onClick(aEvent);
+        event.target.closest(`#${this.root.id}`))
+        this.onClick(event);
     }
 
-    async onClick(aEvent) {
-      aEvent.stopImmediatePropagation();
-      aEvent.stopPropagation();
-      aEvent.preventDefault();
+    async onClick(event) {
+      event.stopImmediatePropagation();
+      event.stopPropagation();
+      event.preventDefault();
 
-      const target = this.getEffectiveItem(aEvent.target);
+      const target = this.getEffectiveItem(event.target);
       if (!target ||
         target.classList.contains('separator') ||
         target.classList.contains('has-submenu') ||
         target.classList.contains('disabled')) {
-        if (!aEvent.target.closest(`#${this.root.id}`))
+        if (!event.target.closest(`#${this.root.id}`))
           return this.close();
         return;
       }
 
-      this.onCommand(target, aEvent);
+      this.onCommand(target, event);
     }
 
-    getNextFocusedItemByAccesskey(aKey) {
+    getNextFocusedItemByAccesskey(key) {
       for (const attribute of ['access-key', 'sub-access-key']) {
         const current = this.lastHoverItem || this.lastFocusedItem || this.root.firstChild;
-        const condition = `@data-${attribute}="${aKey.toLowerCase()}"`;
+        const condition = `@data-${attribute}="${key.toLowerCase()}"`;
         const item = this.getNextItem(current, condition);
         if (item)
           return item;
@@ -490,35 +490,35 @@
       return null;
     }
 
-    onKeyDown(aEvent) {
-      switch (aEvent.key) {
+    onKeyDown(event) {
+      switch (event.key) {
         case 'ArrowUp':
-          aEvent.stopPropagation();
-          aEvent.preventDefault();
+          event.stopPropagation();
+          event.preventDefault();
           this.advanceFocus(-1);
           break;
 
         case 'ArrowDown':
-          aEvent.stopPropagation();
-          aEvent.preventDefault();
+          event.stopPropagation();
+          event.preventDefault();
           this.advanceFocus(1);
           break;
 
         case 'ArrowRight':
-          aEvent.stopPropagation();
-          aEvent.preventDefault();
+          event.stopPropagation();
+          event.preventDefault();
           this.digIn();
           break;
 
         case 'ArrowLeft':
-          aEvent.stopPropagation();
-          aEvent.preventDefault();
+          event.stopPropagation();
+          event.preventDefault();
           this.digOut();
           break;
 
         case 'Home':
-          aEvent.stopPropagation();
-          aEvent.preventDefault();
+          event.stopPropagation();
+          event.preventDefault();
           this.advanceFocus(1, (
             this.lastHoverItem && this.lastHoverItem.parentNode ||
           this.lastFocusedItem && this.lastFocusedItem.parentNode ||
@@ -527,8 +527,8 @@
           break;
 
         case 'End':
-          aEvent.stopPropagation();
-          aEvent.preventDefault();
+          event.stopPropagation();
+          event.preventDefault();
           this.advanceFocus(-1, (
             this.lastHoverItem && this.lastHoverItem.parentNode ||
           this.lastFocusedItem && this.lastFocusedItem.parentNode ||
@@ -537,20 +537,20 @@
           break;
 
         case 'Enter': {
-          aEvent.stopPropagation();
-          aEvent.preventDefault();
+          event.stopPropagation();
+          event.preventDefault();
           const targetItem = this.lastHoverItem || this.lastFocusedItem;
           if (targetItem) {
             if (targetItem.classList.contains('disabled'))
               this.close();
             else if (!targetItem.classList.contains('separator'))
-              this.onCommand(targetItem, aEvent);
+              this.onCommand(targetItem, event);
           }
         }; break;
 
         case 'Escape': {
-          aEvent.stopPropagation();
-          aEvent.preventDefault();
+          event.stopPropagation();
+          event.preventDefault();
           const targetItem = this.lastHoverItem || this.lastFocusedItem;
           if (!targetItem ||
             targetItem.parentNode == this.root)
@@ -560,22 +560,22 @@
         }; break;
 
         default:
-          if (aEvent.key.length == 1) {
-            const item = this.getNextFocusedItemByAccesskey(aEvent.key);
+          if (event.key.length == 1) {
+            const item = this.getNextFocusedItemByAccesskey(event.key);
             if (item) {
               this.lastFocusedItem = item;
               this.lastFocusedItem.focus();
               this.setHover(null);
-              if (this.getNextFocusedItemByAccesskey(aEvent.key) == item)
-                this.onCommand(item, aEvent);
+              if (this.getNextFocusedItemByAccesskey(event.key) == item)
+                this.onCommand(item, event);
             }
           }
           return;
       }
     }
 
-    onKeyUp(aEvent) {
-      switch (aEvent.key) {
+    onKeyUp(event) {
+      switch (event.key) {
         case 'ArrowUp':
         case 'ArrowDown':
         case 'ArrowRight':
@@ -584,80 +584,80 @@
         case 'End':
         case 'Enter':
         case 'Escape':
-          aEvent.stopPropagation();
-          aEvent.preventDefault();
+          event.stopPropagation();
+          event.preventDefault();
           return;
 
         default:
-          if (aEvent.key.length == 1 &&
-            this.getNextFocusedItemByAccesskey(aEvent.key)) {
-            aEvent.stopPropagation();
-            aEvent.preventDefault();
+          if (event.key.length == 1 &&
+            this.getNextFocusedItemByAccesskey(event.key)) {
+            event.stopPropagation();
+            event.preventDefault();
           }
           return;
       }
     }
 
-    getPreviousItem(aBase, aCondition = '') {
-      const extraCondition = aCondition ? `[${aCondition}]` : '' ;
+    getPreviousItem(base, condition = '') {
+      const extrcondition = condition ? `[${condition}]` : '' ;
       const item = (
         evaluateXPath(
-          `preceding-sibling::li[not(${hasClass('separator')})]${extraCondition}[1]`,
-          aBase,
+          `preceding-sibling::li[not(${hasClass('separator')})]${extrcondition}[1]`,
+          base,
           XPathResult.FIRST_ORDERED_NODE_TYPE
         ).singleNodeValue ||
       evaluateXPath(
-        `following-sibling::li[not(${hasClass('separator')})]${extraCondition}[last()]`,
-        aBase,
+        `following-sibling::li[not(${hasClass('separator')})]${extrcondition}[last()]`,
+        base,
         XPathResult.FIRST_ORDERED_NODE_TYPE
       ).singleNodeValue ||
       evaluateXPath(
-        `self::li[not(${hasClass('separator')})]${extraCondition}`,
-        aBase,
+        `self::li[not(${hasClass('separator')})]${extrcondition}`,
+        base,
         XPathResult.FIRST_ORDERED_NODE_TYPE
       ).singleNodeValue
       );
       if (window.getComputedStyle(item, null).display == 'none')
-        return this.getPreviousItem(item, aCondition);
+        return this.getPreviousItem(item, condition);
       return item;
     }
 
-    getNextItem(aBase, aCondition = '') {
-      const extraCondition = aCondition ? `[${aCondition}]` : '' ;
+    getNextItem(base, condition = '') {
+      const extrcondition = condition ? `[${condition}]` : '' ;
       const item = (
         evaluateXPath(
-          `following-sibling::li[not(${hasClass('separator')})]${extraCondition}[1]`,
-          aBase,
+          `following-sibling::li[not(${hasClass('separator')})]${extrcondition}[1]`,
+          base,
           XPathResult.FIRST_ORDERED_NODE_TYPE
         ).singleNodeValue ||
       evaluateXPath(
-        `preceding-sibling::li[not(${hasClass('separator')})]${extraCondition}[last()]`,
-        aBase,
+        `preceding-sibling::li[not(${hasClass('separator')})]${extrcondition}[last()]`,
+        base,
         XPathResult.FIRST_ORDERED_NODE_TYPE
       ).singleNodeValue ||
       evaluateXPath(
-        `self::li[not(${hasClass('separator')})]${extraCondition}`,
-        aBase,
+        `self::li[not(${hasClass('separator')})]${extrcondition}`,
+        base,
         XPathResult.FIRST_ORDERED_NODE_TYPE
       ).singleNodeValue
       );
       if (item && window.getComputedStyle(item, null).display == 'none')
-        return this.getNextItem(item, aCondition);
+        return this.getNextItem(item, condition);
       return item;
     }
 
-    advanceFocus(aDirection, aLastFocused = null) {
-      aLastFocused = aLastFocused || this.lastHoverItem || this.lastFocusedItem;
-      if (!aLastFocused) {
-        if (aDirection < 0)
-          this.lastFocusedItem = aLastFocused = this.root.firstChild;
+    advanceFocus(direction, lastFocused = null) {
+      lastFocused = lastFocused || this.lastHoverItem || this.lastFocusedItem;
+      if (!lastFocused) {
+        if (direction < 0)
+          this.lastFocusedItem = lastFocused = this.root.firstChild;
         else
-          this.lastFocusedItem = aLastFocused = this.root.lastChild;
+          this.lastFocusedItem = lastFocused = this.root.lastChild;
       }
-      if (aDirection < 0)
-        this.lastFocusedItem = this.getPreviousItem(aLastFocused);
+      if (direction < 0)
+        this.lastFocusedItem = this.getPreviousItem(lastFocused);
       else
-        this.lastFocusedItem = this.getNextItem(aLastFocused);
+        this.lastFocusedItem = this.getNextItem(lastFocused);
       this.lastFocusedItem.focus();
       this.lastHoverItem = this.lastFocusedItem;
       this.setHover(null);
@@ -690,7 +690,7 @@
       this.setHover(null);
     }
 
-    onTransitionEnd(aEvent) {
+    onTransitionEnd(event) {
       const hoverItems = this.root.querySelectorAll('li:hover');
       if (hoverItems.length == 0)
         return;
@@ -698,7 +698,7 @@
       const item = this.getEffectiveItem(lastHoverItem);
       if (!item)
         return;
-      if (item.parentNode != aEvent.target)
+      if (item.parentNode != event.target)
         return;
       this.setHover(item);
       item.focus();
@@ -706,10 +706,10 @@
       this.lastHoverItem = item;
     }
 
-    onContextMenu(aEvent) {
-      aEvent.stopImmediatePropagation();
-      aEvent.stopPropagation();
-      aEvent.preventDefault();
+    onContextMenu(event) {
+      event.stopImmediatePropagation();
+      event.stopPropagation();
+      event.preventDefault();
     }
 
 
