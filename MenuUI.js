@@ -734,7 +734,7 @@
         }
 
         ${common}.menu-ui.open,
-        ${common}.menu-ui li.open > ul {
+        ${common}.menu-ui.open li.open > ul {
           opacity: 1;
           pointer-events: auto;
         }
