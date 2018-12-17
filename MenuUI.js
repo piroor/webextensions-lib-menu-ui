@@ -895,8 +895,13 @@
           visibility: visible;
         }
 
-        ${common}.menu-ui.menu li[data-icon]:not([data-icon-color]) {
+        ${common}.menu-ui.menu li[data-icon]:not([data-icon-color]),
+        ${common}.menu-ui.panel li[data-icon]:not([data-icon-color]) {
           background-position: calc(1em - 16px + 0.5em) center;
+        }
+
+        ${common}.menu-ui.panel li[data-icon]:not([data-icon-color]) {
+          padding-left: calc(16px + 0.2em);
         }
 
         ${common}.menu-ui li[data-icon]:not([data-icon-color]) .icon {
