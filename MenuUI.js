@@ -144,7 +144,7 @@
       this.lastHoverItem = null;
       this.anchor = options.anchor;
       for (const item of Array.from(this.root.querySelectorAll('li:not(.separator)'))) {
-        item.tabIndex = 0;
+        item.setAttribute('tabindex', -1);
         item.classList.remove('open');
         this.updateAccessKey(item);
         const icon = item.querySelector('span.icon') || document.createElement('span');
