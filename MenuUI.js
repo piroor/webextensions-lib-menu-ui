@@ -726,7 +726,7 @@
           max-height: calc(100% - 6px);
           max-width: calc(100% - 6px);
           opacity: 0;
-          overflow: auto;
+          overflow: hidden; /* because scrollbars always trap mouse events even if it is invisible. See also: https://github.com/piroor/treestyletab/issues/2386 */
           padding: 0;
           pointer-events: none;
           position: fixed;
@@ -736,6 +736,7 @@
         ${common}.menu-ui.open,
         ${common}.menu-ui.open li.open > ul {
           opacity: 1;
+          overflow: auto;
           pointer-events: auto;
         }
 
