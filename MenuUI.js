@@ -924,15 +924,15 @@
     }
 
     static init() {
-  MenuUI.uniqueKey   = parseInt(Math.random() * Math.pow(2, 16));
-  MenuUI.commonClass = `menu-ui-${MenuUI.uniqueKey}`;
+      MenuUI.uniqueKey   = parseInt(Math.random() * Math.pow(2, 16));
+      MenuUI.commonClass = `menu-ui-${MenuUI.uniqueKey}`;
 
-  MenuUI.prototype.uniqueKey   = MenuUI.uniqueKey;
-  MenuUI.prototype.commonClass = MenuUI.commonClass;
+      MenuUI.prototype.uniqueKey   = MenuUI.uniqueKey;
+      MenuUI.prototype.commonClass = MenuUI.commonClass;
 
-  MenuUI.installStyles();
+      MenuUI.installStyles();
 
-  window.MenuUI = MenuUI;
+      window.MenuUI = MenuUI;
     }
   };
 
