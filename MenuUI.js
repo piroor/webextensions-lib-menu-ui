@@ -922,8 +922,8 @@
       `;
       document.head.appendChild(this.style);
     }
-  };
 
+    static init() {
   MenuUI.uniqueKey   = parseInt(Math.random() * Math.pow(2, 16));
   MenuUI.commonClass = `menu-ui-${MenuUI.uniqueKey}`;
 
@@ -933,4 +933,8 @@
   MenuUI.installStyles();
 
   window.MenuUI = MenuUI;
+    }
+  };
+
+  MenuUI.init();
 }
