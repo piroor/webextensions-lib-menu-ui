@@ -7,51 +7,51 @@
 
 {
   class MenuUI {
-  static _wait(timeout) {
-    return new Promise((resolve, _reject) => {
-      setTimeout(resolve, timeout);
-    });
-  }
-
-  // XPath Utilities
-  static _hasClass(className) {
-    return `contains(concat(" ", normalize-space(@class), " "), " ${className} ")`;
-  };
-
-  static _evaluateXPath(expression, context, type) {
-    if (!type)
-      type = XPathResult.ORDERED_NODE_SNAPSHOT_TYPE;
-    try {
-      return (context.ownerDocument || context).evaluate(
-        expression,
-        (context || document),
-        null,
-        type,
-        null
-      );
+    static _wait(timeout) {
+      return new Promise((resolve, _reject) => {
+        setTimeout(resolve, timeout);
+      });
     }
-    catch(_e) {
-      return {
-        singleNodeValue: null,
-        snapshotLength:  0,
-        snapshotItem:    function() {
-          return null
-        }
-      };
-    }
-  }
 
-  static _getArrayFromXPathResult(result) {
-    const max   = result.snapshotLength;
-    const array = new Array(max);
-    if (!max)
+    // XPath Utilities
+    static _hasClass(className) {
+      return `contains(concat(" ", normalize-space(@class), " "), " ${className} ")`;
+    };
+
+    static _evaluateXPath(expression, context, type) {
+      if (!type)
+        type = XPathResult.ORDERED_NODE_SNAPSHOT_TYPE;
+      try {
+        return (context.ownerDocument || context).evaluate(
+          expression,
+          (context || document),
+          null,
+          type,
+          null
+        );
+      }
+      catch(_e) {
+        return {
+          singleNodeValue: null,
+          snapshotLength:  0,
+          snapshotItem:    function() {
+            return null
+          }
+        };
+      }
+    }
+
+    static _getArrayFromXPathResult(result) {
+      const max   = result.snapshotLength;
+      const array = new Array(max);
+      if (!max)
+        return array;
+
+      for (let i = 0; i < max; i++) {
+        array[i] = result.snapshotItem(i);
+      }
       return array;
-
-    for (let i = 0; i < max; i++) {
-      array[i] = result.snapshotItem(i);
     }
-    return array;
-  }
 
     constructor(params = {}) {
       this.lastHoverItem   = null;
