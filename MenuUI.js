@@ -6,18 +6,19 @@
 'use strict';
 
 {
-  const wait = (timeout) => {
+  class MenuUI {
+  static _wait(timeout) {
     return new Promise((resolve, _reject) => {
       setTimeout(resolve, timeout);
     });
-  };
+  }
 
   // XPath Utilities
-  const hasClass = (className) => {
+  static _hasClass(className) {
     return `contains(concat(" ", normalize-space(@class), " "), " ${className} ")`;
   };
 
-  const evaluateXPath = (expression, context, type) => {
+  static _evaluateXPath(expression, context, type) {
     if (!type)
       type = XPathResult.ORDERED_NODE_SNAPSHOT_TYPE;
     try {
@@ -38,9 +39,9 @@
         }
       };
     }
-  };
+  }
 
-  const getArrayFromXPathResult = (result) => {
+  static _getArrayFromXPathResult(result) {
     const max   = result.snapshotLength;
     const array = new Array(max);
     if (!max)
@@ -50,9 +51,8 @@
       array[i] = result.snapshotItem(i);
     }
     return array;
-  };
+  }
 
-  class MenuUI {
     constructor(params = {}) {
       this.lastHoverItem   = null;
       this.lastFocusedItem = null;
@@ -104,10 +104,10 @@
       const title = item.getAttribute('title');
       if (title)
         item.setAttribute('title', title.replace(ACCESS_KEY_MATCHER, '$2'));
-      const label = evaluateXPath('child::text()', item, XPathResult.STRING_TYPE).stringValue;
+      const label = MenuUI._evaluateXPath('child::text()', item, XPathResult.STRING_TYPE).stringValue;
       const matchedKey = label.match(ACCESS_KEY_MATCHER);
       if (matchedKey) {
-        const textNode = evaluateXPath(
+        const textNode = MenuUI._evaluateXPath(
           `child::node()[contains(self::text(), "${matchedKey[1]}")]`,
           item,
           XPathResult.FIRST_ORDERED_NODE_TYPE
@@ -193,12 +193,12 @@
       }
       this.onShown();
       return new Promise(async (resolve, _reject) => {
-        await wait(0);
+        await MenuUI._wait(0);
         if (this.tryCancelOpen()) {
           this.close().then(resolve);
           return;
         }
-        await wait(this.animationDuration);
+        await MenuUI._wait(this.animationDuration);
         if (this.tryCancelOpen()) {
           this.close().then(resolve);
           return;
@@ -411,24 +411,24 @@
     }
 
     openSubmenuFor(item) {
-      const items = evaluateXPath(
-        `ancestor-or-self::li[${hasClass('has-submenu')}]`,
+      const items = MenuUI._evaluateXPath(
+        `ancestor-or-self::li[${MenuUI._hasClass('has-submenu')}]`,
         item
       );
-      for (const item of getArrayFromXPathResult(items)) {
+      for (const item of MenuUI._getArrayFromXPathResult(items)) {
         item.classList.add('open');
       }
     }
 
     closeOtherSubmenus(item) {
-      const items = evaluateXPath(
-        `preceding-sibling::li[${hasClass('has-submenu')}] |
-       following-sibling::li[${hasClass('has-submenu')}] |
-       preceding-sibling::li/descendant::li[${hasClass('has-submenu')}] |
-       following-sibling::li/descendant::li[${hasClass('has-submenu')}]`,
+      const items = MenuUI._evaluateXPath(
+        `preceding-sibling::li[${MenuUI._hasClass('has-submenu')}] |
+       following-sibling::li[${MenuUI._hasClass('has-submenu')}] |
+       preceding-sibling::li/descendant::li[${MenuUI._hasClass('has-submenu')}] |
+       following-sibling::li/descendant::li[${MenuUI._hasClass('has-submenu')}]`,
         item
       );
-      for (const item of getArrayFromXPathResult(items)) {
+      for (const item of MenuUI._getArrayFromXPathResult(items)) {
         item.delayedClose = setTimeout(() => {
           item.classList.remove('open');
         }, this.subMenuCloseDelay);
@@ -601,18 +601,18 @@
     getPreviousItem(base, condition = '') {
       const extrcondition = condition ? `[${condition}]` : '' ;
       const item = (
-        evaluateXPath(
-          `preceding-sibling::li[not(${hasClass('separator')})]${extrcondition}[1]`,
+        MenuUI._evaluateXPath(
+          `preceding-sibling::li[not(${MenuUI._hasClass('separator')})]${extrcondition}[1]`,
           base,
           XPathResult.FIRST_ORDERED_NODE_TYPE
         ).singleNodeValue ||
-      evaluateXPath(
-        `following-sibling::li[not(${hasClass('separator')})]${extrcondition}[last()]`,
+      MenuUI._evaluateXPath(
+        `following-sibling::li[not(${MenuUI._hasClass('separator')})]${extrcondition}[last()]`,
         base,
         XPathResult.FIRST_ORDERED_NODE_TYPE
       ).singleNodeValue ||
-      evaluateXPath(
-        `self::li[not(${hasClass('separator')})]${extrcondition}`,
+      MenuUI._evaluateXPath(
+        `self::li[not(${MenuUI._hasClass('separator')})]${extrcondition}`,
         base,
         XPathResult.FIRST_ORDERED_NODE_TYPE
       ).singleNodeValue
@@ -625,18 +625,18 @@
     getNextItem(base, condition = '') {
       const extrcondition = condition ? `[${condition}]` : '' ;
       const item = (
-        evaluateXPath(
-          `following-sibling::li[not(${hasClass('separator')})]${extrcondition}[1]`,
+        MenuUI._evaluateXPath(
+          `following-sibling::li[not(${MenuUI._hasClass('separator')})]${extrcondition}[1]`,
           base,
           XPathResult.FIRST_ORDERED_NODE_TYPE
         ).singleNodeValue ||
-      evaluateXPath(
-        `preceding-sibling::li[not(${hasClass('separator')})]${extrcondition}[last()]`,
+      MenuUI._evaluateXPath(
+        `preceding-sibling::li[not(${MenuUI._hasClass('separator')})]${extrcondition}[last()]`,
         base,
         XPathResult.FIRST_ORDERED_NODE_TYPE
       ).singleNodeValue ||
-      evaluateXPath(
-        `self::li[not(${hasClass('separator')})]${extrcondition}`,
+      MenuUI._evaluateXPath(
+        `self::li[not(${MenuUI._hasClass('separator')})]${extrcondition}`,
         base,
         XPathResult.FIRST_ORDERED_NODE_TYPE
       ).singleNodeValue
