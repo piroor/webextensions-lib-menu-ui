@@ -239,16 +239,19 @@
         if (containerRect.bottom - anchorRect.bottom >= menuRect.height) {
           top = anchorRect.bottom;
           this.marker.classList.add('top');
+          this.marker.classList.remove('bottom');
           this.marker.style.top = `calc(${top}px - 0.4em)`;
         }
         else if (anchorRect.top - containerRect.top >= menuRect.height) {
           top = Math.max(0, anchorRect.top - menuRect.height);
           this.marker.classList.add('bottom');
+          this.marker.classList.remove('top');
           this.marker.style.top = `calc(${top}px + ${menuRect.height}px - 0.6em)`;
         }
         else {
           top = Math.max(0, containerRect.top - menuRect.height);
           this.marker.classList.add('bottom');
+          this.marker.classList.remove('top');
           this.marker.style.top = `calc(${top}px + ${menuRect.height}px - 0.6em)`;
         }
 
