@@ -243,42 +243,42 @@
     $updatePosition(menu, options = {}) {
       let left = options.left;
       let top  = options.top;
-      const $containerRect = this.$containerRect;
+      const containerRect = this.$containerRect;
       const menuRect      = menu.getBoundingClientRect();
 
       if (options.anchor &&
           (left === undefined || top === undefined) &&
           menu == this.root) {
         const anchorRect = options.anchor.getBoundingClientRect();
-        if ($containerRect.bottom - anchorRect.bottom >= menuRect.height) {
+        if (containerRect.bottom - anchorRect.bottom >= menuRect.height) {
           top = anchorRect.bottom;
           this.$marker.classList.add('top');
           this.$marker.classList.remove('bottom');
           this.$marker.style.top = `calc(${top}px - 0.4em)`;
         }
-        else if (anchorRect.top - $containerRect.top >= menuRect.height) {
+        else if (anchorRect.top - containerRect.top >= menuRect.height) {
           top = Math.max(0, anchorRect.top - menuRect.height);
           this.$marker.classList.add('bottom');
           this.$marker.classList.remove('top');
           this.$marker.style.top = `calc(${top}px + ${menuRect.height}px - 0.6em)`;
         }
         else {
-          top = Math.max(0, $containerRect.top - menuRect.height);
+          top = Math.max(0, containerRect.top - menuRect.height);
           this.$marker.classList.remove('bottom');
           this.$marker.classList.remove('top');
           this.$marker.style.top = `calc(${top}px + ${menuRect.height}px - 0.6em)`;
         }
 
-        if ($containerRect.right - anchorRect.left >= menuRect.width) {
+        if (containerRect.right - anchorRect.left >= menuRect.width) {
           left = anchorRect.left;
           this.$marker.style.left = `calc(${left}px + 0.5em)`;
         }
-        else if (anchorRect.left - $containerRect.left >= menuRect.width) {
+        else if (anchorRect.left - containerRect.left >= menuRect.width) {
           left = Math.max(0, anchorRect.right - menuRect.width);
           this.$marker.style.left = `calc(${left}px + ${menuRect.width}px - 1.5em)`;
         }
         else {
-          left = Math.max(0, $containerRect.left - menuRect.width);
+          left = Math.max(0, containerRect.left - menuRect.width);
           this.$marker.style.left = `calc(${left}px + ${menuRect.width}px - 1.5em)`;
         }
       }
@@ -290,23 +290,23 @@
       }
 
       if (left === undefined)
-        left = Math.max(0, ($containerRect.width - menuRect.width) / 2);
+        left = Math.max(0, (containerRect.width - menuRect.width) / 2);
       if (top === undefined)
-        top = Math.max(0, ($containerRect.height - menuRect.height) / 2);
+        top = Math.max(0, (containerRect.height - menuRect.height) / 2);
 
       if (!options.anchor && menu == this.root) {
-      // reposition to avoid the menu is opened below the cursor
-        if ($containerRect.bottom - top < menuRect.height) {
+        // reposition to avoid the menu is opened below the cursor
+        if (containerRect.bottom - top < menuRect.height) {
           top = top - menuRect.height;
         }
-        if ($containerRect.right - left < menuRect.width) {
+        if (containerRect.right - left < menuRect.width) {
           left = left - menuRect.width;
         }
       }
 
       const minMargin = 3;
-      left = Math.max(minMargin, Math.min(left, $containerRect.width - menuRect.width - minMargin));
-      top  = Math.max(minMargin, Math.min(top,  $containerRect.height - menuRect.height - minMargin));
+      left = Math.max(minMargin, Math.min(left, containerRect.width - menuRect.width - minMargin));
+      top  = Math.max(minMargin, Math.min(top,  containerRect.height - menuRect.height - minMargin));
       menu.style.left = `${left}px`;
       if (menu == this.root && this.$marker.classList.contains('top'))
         menu.style.top = `calc(${top}px + 0.5em)`;
