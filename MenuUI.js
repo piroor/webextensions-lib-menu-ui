@@ -192,7 +192,9 @@
 
     updateMenuItem(item) {
       this.$updateItems(item);
-      this.$updatePositions(item);
+      const submenu = item.querySelector('ul');
+      if (submenu)
+        this.$updatePositions(submenu);
     }
 
     $updateItems(parent) {
@@ -283,8 +285,9 @@
         }
       }
 
+      let parentRect;
       if (menu.parentNode.localName == 'li') {
-        const parentRect = menu.parentNode.getBoundingClientRect();
+        parentRect = menu.parentNode.getBoundingClientRect();
         left = parentRect.right;
         top  = parentRect.top;
       }
@@ -305,9 +308,19 @@
       }
 
       const minMargin = 3;
-      left = Math.max(minMargin, Math.min(left, containerRect.width - menuRect.width - minMargin));
-      top  = Math.max(minMargin, Math.min(top,  containerRect.height - menuRect.height - minMargin));
+      const overwrap  = 4;
+      const firstTryLeft = Math.max(minMargin, Math.min(left - overwrap, containerRect.width - menuRect.width - minMargin));
+      if (parentRect &&
+          firstTryLeft < parentRect.right - overwrap &&
+          containerRect.left < parentRect.left - menuRect.width + overwrap) {
+        left = parentRect.left - menuRect.width + overwrap;
+      }
+      else {
+        left = firstTryLeft;
+      }
       menu.style.left = `${left}px`;
+
+      top  = Math.max(minMargin, Math.min(top,  containerRect.height - menuRect.height - minMargin));
       if (menu == this.root && this.$marker.classList.contains('top'))
         menu.style.top = `calc(${top}px + 0.5em)`;
       else if (menu == this.root && this.$marker.classList.contains('bottom'))
