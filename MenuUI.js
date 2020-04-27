@@ -54,8 +54,8 @@
     }
 
     constructor(params = {}) {
-      this.lastHoverItem   = null;
-      this.lastFocusedItem = null;
+      this.$lastHoverItem   = null;
+      this.$lastFocusedItem = null;
 
       this.root              = params.root;
       this.onCommand         = params.onCommand || (() => {});
@@ -66,40 +66,40 @@
       this.subMenuCloseDelay = params.subMenuCloseDelay || 300;
       this.appearance        = params.appearance || 'menu';
 
-      this.onBlur            = this.onBlur.bind(this);
-      this.onMouseOver       = this.onMouseOver.bind(this);
-      this.onMouseDown       = this.onMouseDown.bind(this);
-      this.onMouseUp         = this.onMouseUp.bind(this);
-      this.onClick           = this.onClick.bind(this);
-      this.onKeyDown         = this.onKeyDown.bind(this);
-      this.onKeyUp           = this.onKeyUp.bind(this);
-      this.onTransitionEnd   = this.onTransitionEnd.bind(this);
-      this.onContextMenu     = this.onContextMenu.bind(this);
+      this.$onBlur            = this.$onBlur.bind(this);
+      this.$onMouseOver       = this.$onMouseOver.bind(this);
+      this.$onMouseDown       = this.$onMouseDown.bind(this);
+      this.$onMouseUp         = this.$onMouseUp.bind(this);
+      this.$onClick           = this.$onClick.bind(this);
+      this.$onKeyDown         = this.$onKeyDown.bind(this);
+      this.$onKeyUp           = this.$onKeyUp.bind(this);
+      this.$onTransitionEnd   = this.$onTransitionEnd.bind(this);
+      this.$onContextMenu     = this.$onContextMenu.bind(this);
 
       if (!this.root.id)
-        this.root.id = `MenuUI-root-${this.uniqueKey}-${parseInt(Math.random() * Math.pow(2, 16))}`;
+        this.root.id = `MenuUI-root-${this.$uniqueKey}-${parseInt(Math.random() * Math.pow(2, 16))}`;
 
-      this.root.classList.add(this.commonClass);
+      this.root.classList.add(this.$commonClass);
       this.root.classList.add('menu-ui');
       this.root.classList.add(this.appearance);
 
-      this.screen = document.createElement('div');
-      this.screen.classList.add(this.commonClass);
-      this.screen.classList.add('menu-ui-blocking-screen');
-      this.root.parentNode.insertBefore(this.screen, this.root.nextSibling);
+      this.$screen = document.createElement('div');
+      this.$screen.classList.add(this.$commonClass);
+      this.$screen.classList.add('menu-ui-blocking-screen');
+      this.root.parentNode.insertBefore(this.$screen, this.root.nextSibling);
 
-      this.marker = document.createElement('span');
-      this.marker.classList.add(this.commonClass);
-      this.marker.classList.add('menu-ui-marker');
-      this.marker.classList.add(this.appearance);
-      this.root.parentNode.insertBefore(this.marker, this.root.nextSibling);
+      this.$marker = document.createElement('span');
+      this.$marker.classList.add(this.$commonClass);
+      this.$marker.classList.add('menu-ui-marker');
+      this.$marker.classList.add(this.appearance);
+      this.root.parentNode.insertBefore(this.$marker, this.root.nextSibling);
     }
 
     get opened() {
       return this.root.classList.contains('open');
     }
 
-    updateAccessKey(item) {
+    $updateAccessKey(item) {
       const ACCESS_KEY_MATCHER = /(&([^\s]))/i;
       const title = item.getAttribute('title');
       if (title)
@@ -136,50 +136,50 @@
       if (this.closeTimeout) {
         clearTimeout(this.closeTimeout);
         delete this.closeTimeout;
-        this.onClosed();
+        this.$onClosed();
       }
       this.canceller = options.canceller;
-      this.mouseDownAfterOpen = false;
-      this.lastFocusedItem = null;
-      this.lastHoverItem = null;
+      this.$mouseDownAfterOpen = false;
+      this.$lastFocusedItem = null;
+      this.$lastHoverItem = null;
       this.anchor = options.anchor;
-      this.updateItems(this.root);
+      this.$updateItems(this.root);
       this.root.classList.add('open');
-      this.screen.classList.add('open');
-      this.marker.classList.remove('top');
-      this.marker.classList.remove('bottom');
+      this.$screen.classList.add('open');
+      this.$marker.classList.remove('top');
+      this.$marker.classList.remove('bottom');
       if (this.anchor) {
         this.anchor.classList.add('open');
-        this.marker.style.transition = `opacity ${this.animationDuration}ms ease-out`;
-        this.marker.classList.add('open');
+        this.$marker.style.transition = `opacity ${this.animationDuration}ms ease-out`;
+        this.$marker.classList.add('open');
       }
-      this.updatePositions(this.root, options);
+      this.$updatePositions(this.root, options);
       this.onShown();
       return new Promise(async (resolve, _reject) => {
         await MenuUI.$wait(0);
-        if (this.tryCancelOpen()) {
+        if (this.$tryCancelOpen()) {
           this.close().then(resolve);
           return;
         }
         await MenuUI.$wait(this.animationDuration);
-        if (this.tryCancelOpen()) {
+        if (this.$tryCancelOpen()) {
           this.close().then(resolve);
           return;
         }
-        this.root.parentNode.addEventListener('mouseover', this.onMouseOver);
-        this.root.addEventListener('transitionend', this.onTransitionEnd);
-        window.addEventListener('contextmenu', this.onContextMenu, { capture: true });
-        window.addEventListener('mousedown', this.onMouseDown, { capture: true });
-        window.addEventListener('mouseup', this.onMouseUp, { capture: true });
-        window.addEventListener('click', this.onClick, { capture: true });
-        window.addEventListener('keydown', this.onKeyDown, { capture: true });
-        window.addEventListener('keyup', this.onKeyUp, { capture: true });
-        window.addEventListener('blur', this.onBlur, { capture: true });
+        this.root.parentNode.addEventListener('mouseover', this.$onMouseOver);
+        this.root.addEventListener('transitionend', this.$onTransitionEnd);
+        window.addEventListener('contextmenu', this.$onContextMenu, { capture: true });
+        window.addEventListener('mousedown', this.$onMouseDown, { capture: true });
+        window.addEventListener('mouseup', this.$onMouseUp, { capture: true });
+        window.addEventListener('click', this.$onClick, { capture: true });
+        window.addEventListener('keydown', this.$onKeyDown, { capture: true });
+        window.addEventListener('keyup', this.$onKeyUp, { capture: true });
+        window.addEventListener('blur', this.$onBlur, { capture: true });
         resolve();
       });
     }
 
-    tryCancelOpen() {
+    $tryCancelOpen() {
       if (!(typeof this.canceller == 'function'))
         return false;
       try {
@@ -191,15 +191,15 @@
     }
 
     updateMenuItem(item) {
-      this.updateItems(item);
-      this.updatePositions(item);
+      this.$updateItems(item);
+      this.$updatePositions(item);
     }
 
-    updateItems(parent) {
+    $updateItems(parent) {
       for (const item of parent.querySelectorAll('li:not(.separator)')) {
         item.setAttribute('tabindex', -1);
         item.classList.remove('open');
-        this.updateAccessKey(item);
+        this.$updateAccessKey(item);
         const icon = item.querySelector('span.icon') || document.createElement('span');
         if (!icon.parentNode) {
           icon.classList.add('icon');
@@ -229,56 +229,56 @@
       }
     }
 
-    updatePositions(parent, options = {}) {
+    $updatePositions(parent, options = {}) {
       const menus = [parent].concat(Array.from(parent.querySelectorAll('ul')));
       for (const menu of menus) {
         if (this.animationDuration)
           menu.style.transition = `opacity ${this.animationDuration}ms ease-out`;
         else
           menu.style.transition = '';
-        this.updatePosition(menu, options);
+        this.$updatePosition(menu, options);
       }
     }
 
-    updatePosition(menu, options = {}) {
+    $updatePosition(menu, options = {}) {
       let left = options.left;
       let top  = options.top;
-      const containerRect = this.containerRect;
+      const $containerRect = this.$containerRect;
       const menuRect      = menu.getBoundingClientRect();
 
       if (options.anchor &&
         (left === undefined || top === undefined)) {
         const anchorRect = options.anchor.getBoundingClientRect();
-        if (containerRect.bottom - anchorRect.bottom >= menuRect.height) {
+        if ($containerRect.bottom - anchorRect.bottom >= menuRect.height) {
           top = anchorRect.bottom;
-          this.marker.classList.add('top');
-          this.marker.classList.remove('bottom');
-          this.marker.style.top = `calc(${top}px - 0.4em)`;
+          this.$marker.classList.add('top');
+          this.$marker.classList.remove('bottom');
+          this.$marker.style.top = `calc(${top}px - 0.4em)`;
         }
-        else if (anchorRect.top - containerRect.top >= menuRect.height) {
+        else if (anchorRect.top - $containerRect.top >= menuRect.height) {
           top = Math.max(0, anchorRect.top - menuRect.height);
-          this.marker.classList.add('bottom');
-          this.marker.classList.remove('top');
-          this.marker.style.top = `calc(${top}px + ${menuRect.height}px - 0.6em)`;
+          this.$marker.classList.add('bottom');
+          this.$marker.classList.remove('top');
+          this.$marker.style.top = `calc(${top}px + ${menuRect.height}px - 0.6em)`;
         }
         else {
-          top = Math.max(0, containerRect.top - menuRect.height);
-          this.marker.classList.add('bottom');
-          this.marker.classList.remove('top');
-          this.marker.style.top = `calc(${top}px + ${menuRect.height}px - 0.6em)`;
+          top = Math.max(0, $containerRect.top - menuRect.height);
+          this.$marker.classList.add('bottom');
+          this.$marker.classList.remove('top');
+          this.$marker.style.top = `calc(${top}px + ${menuRect.height}px - 0.6em)`;
         }
 
-        if (containerRect.right - anchorRect.left >= menuRect.width) {
+        if ($containerRect.right - anchorRect.left >= menuRect.width) {
           left = anchorRect.left;
-          this.marker.style.left = `calc(${left}px + 0.5em)`;
+          this.$marker.style.left = `calc(${left}px + 0.5em)`;
         }
-        else if (anchorRect.left - containerRect.left >= menuRect.width) {
+        else if (anchorRect.left - $containerRect.left >= menuRect.width) {
           left = Math.max(0, anchorRect.right - menuRect.width);
-          this.marker.style.left = `calc(${left}px + ${menuRect.width}px - 1.5em)`;
+          this.$marker.style.left = `calc(${left}px + ${menuRect.width}px - 1.5em)`;
         }
         else {
-          left = Math.max(0, containerRect.left - menuRect.width);
-          this.marker.style.left = `calc(${left}px + ${menuRect.width}px - 1.5em)`;
+          left = Math.max(0, $containerRect.left - menuRect.width);
+          this.$marker.style.left = `calc(${left}px + ${menuRect.width}px - 1.5em)`;
         }
       }
 
@@ -289,27 +289,27 @@
       }
 
       if (left === undefined)
-        left = Math.max(0, (containerRect.width - menuRect.width) / 2);
+        left = Math.max(0, ($containerRect.width - menuRect.width) / 2);
       if (top === undefined)
-        top = Math.max(0, (containerRect.height - menuRect.height) / 2);
+        top = Math.max(0, ($containerRect.height - menuRect.height) / 2);
 
       if (!options.anchor && menu == this.root) {
       // reposition to avoid the menu is opened below the cursor
-        if (containerRect.bottom - top < menuRect.height) {
+        if ($containerRect.bottom - top < menuRect.height) {
           top = top - menuRect.height;
         }
-        if (containerRect.right - left < menuRect.width) {
+        if ($containerRect.right - left < menuRect.width) {
           left = left - menuRect.width;
         }
       }
 
       const minMargin = 3;
-      left = Math.max(minMargin, Math.min(left, containerRect.width - menuRect.width - minMargin));
-      top  = Math.max(minMargin, Math.min(top,  containerRect.height - menuRect.height - minMargin));
+      left = Math.max(minMargin, Math.min(left, $containerRect.width - menuRect.width - minMargin));
+      top  = Math.max(minMargin, Math.min(top,  $containerRect.height - menuRect.height - minMargin));
       menu.style.left = `${left}px`;
-      if (menu == this.root && this.marker.classList.contains('top'))
+      if (menu == this.root && this.$marker.classList.contains('top'))
         menu.style.top = `calc(${top}px + 0.5em)`;
-      else if (menu == this.root && this.marker.classList.contains('bottom'))
+      else if (menu == this.root && this.$marker.classList.contains('bottom'))
         menu.style.top = `calc(${top}px - 0.5em)`;
       else
         menu.style.top = `${top}px`;
@@ -318,44 +318,44 @@
     async close() {
       if (!this.opened)
         return;
-      this.tryCancelOpen();
+      this.$tryCancelOpen();
       this.root.classList.remove('open');
-      this.screen.classList.remove('open');
+      this.$screen.classList.remove('open');
       if (this.anchor) {
         this.anchor.classList.remove('open');
-        this.marker.classList.remove('open');
+        this.$marker.classList.remove('open');
       }
-      this.mouseDownAfterOpen = false;
-      this.lastFocusedItem = null;
-      this.lastHoverItem = null;
+      this.$mouseDownAfterOpen = false;
+      this.$lastFocusedItem = null;
+      this.$lastHoverItem = null;
       this.anchor = null;
       this.canceller = null;
       return new Promise((resolve, _reject) => {
         this.closeTimeout = setTimeout(() => {
           delete this.closeTimeout;
-          this.onClosed();
+          this.$onClosed();
           resolve();
         }, this.animationDuration);
       });
     }
-    onClosed() {
+    $onClosed() {
       const menus = [this.root].concat(Array.from(this.root.querySelectorAll('ul')));
       for (const menu of menus) {
-        this.updatePosition(menu, { left: 0, right: 0 });
+        this.$updatePosition(menu, { left: 0, right: 0 });
       }
-      this.root.parentNode.removeEventListener('mouseover', this.onMouseOver);
-      this.root.removeEventListener('transitionend', this.onTransitionEnd);
-      window.removeEventListener('contextmenu', this.onContextMenu, { capture: true });
-      window.removeEventListener('mousedown', this.onMouseDown, { capture: true });
-      window.removeEventListener('mouseup', this.onMouseUp, { capture: true });
-      window.removeEventListener('click', this.onClick, { capture: true });
-      window.removeEventListener('keydown', this.onKeyDown, { capture: true });
-      window.removeEventListener('keyup', this.onKeyUp, { capture: true });
-      window.removeEventListener('blur', this.onBlur, { capture: true });
+      this.root.parentNode.removeEventListener('mouseover', this.$onMouseOver);
+      this.root.removeEventListener('transitionend', this.$onTransitionEnd);
+      window.removeEventListener('contextmenu', this.$onContextMenu, { capture: true });
+      window.removeEventListener('mousedown', this.$onMouseDown, { capture: true });
+      window.removeEventListener('mouseup', this.$onMouseUp, { capture: true });
+      window.removeEventListener('click', this.$onClick, { capture: true });
+      window.removeEventListener('keydown', this.$onKeyDown, { capture: true });
+      window.removeEventListener('keyup', this.$onKeyUp, { capture: true });
+      window.removeEventListener('blur', this.$onBlur, { capture: true });
       this.onHidden();
     }
 
-    get containerRect() {
+    get $containerRect() {
       const x      = 0;
       const y      = 0;
       const width  = window.innerWidth;
@@ -369,13 +369,13 @@
       };
     }
 
-    onBlur(event) {
+    $onBlur(event) {
       if (event.target == document)
         this.close();
     }
 
-    onMouseOver(event) {
-      let item = this.getEffectiveItem(event.target);
+    $onMouseOver(event) {
+      let item = this.$getEffectiveItem(event.target);
       if (this.delayedOpen && this.delayedOpen.item != item) {
         clearTimeout(this.delayedOpen.timer);
         this.delayedOpen = null;
@@ -385,39 +385,39 @@
         item.delayedClose = null;
       }
       if (item && item.classList.contains('separator')) {
-        this.lastHoverItem = item;
+        this.$lastHoverItem = item;
         item = null;
       }
       if (!item) {
-        if (this.lastFocusedItem) {
-          if (this.lastFocusedItem.parentNode != this.root) {
-            this.lastFocusedItem = this.lastFocusedItem.parentNode.parentNode;
-            this.lastFocusedItem.focus();
+        if (this.$lastFocusedItem) {
+          if (this.$lastFocusedItem.parentNode != this.root) {
+            this.$lastFocusedItem = this.$lastFocusedItem.parentNode.parentNode;
+            this.$lastFocusedItem.focus();
           }
           else {
-            this.lastFocusedItem.blur();
-            this.lastFocusedItem = null;
+            this.$lastFocusedItem.blur();
+            this.$lastFocusedItem = null;
           }
         }
-        this.setHover(null);
+        this.$setHover(null);
         return;
       }
 
-      this.setHover(item);
-      this.closeOtherSubmenus(item);
+      this.$setHover(item);
+      this.$closeOtherSubmenus(item);
       item.focus();
-      this.lastFocusedItem = item;
+      this.$lastFocusedItem = item;
 
       this.delayedOpen = {
         item:  item,
         timer: setTimeout(() => {
           this.delayedOpen = null;
-          this.openSubmenuFor(item);
+          this.$openSubmenuFor(item);
         }, this.subMenuOpenDelay)
       };
     }
 
-    setHover(item) {
+    $setHover(item) {
       for (const item of this.root.querySelectorAll('li.hover')) {
         if (item != item)
           item.classList.remove('hover');
@@ -426,7 +426,7 @@
         item.classList.add('hover');
     }
 
-    openSubmenuFor(item) {
+    $openSubmenuFor(item) {
       const items = MenuUI.$evaluateXPath(
         `ancestor-or-self::li[${MenuUI.$hasClass('has-submenu')}]`,
         item
@@ -436,7 +436,7 @@
       }
     }
 
-    closeOtherSubmenus(item) {
+    $closeOtherSubmenus(item) {
       const items = MenuUI.$evaluateXPath(
         `preceding-sibling::li[${MenuUI.$hasClass('has-submenu')}] |
        following-sibling::li[${MenuUI.$hasClass('has-submenu')}] |
@@ -451,14 +451,14 @@
       }
     }
 
-    onMouseDown(event) {
+    $onMouseDown(event) {
       event.stopImmediatePropagation();
       event.stopPropagation();
       event.preventDefault();
-      this.mouseDownAfterOpen = true;
+      this.$mouseDownAfterOpen = true;
     }
 
-    getEffectiveItem(node) {
+    $getEffectiveItem(node) {
       const target = node.closest('li');
       let untransparentTarget = target && target.closest('ul');
       while (untransparentTarget) {
@@ -471,18 +471,18 @@
       return target;
     }
 
-    onMouseUp(event) {
-      if (!this.mouseDownAfterOpen &&
+    $onMouseUp(event) {
+      if (!this.$mouseDownAfterOpen &&
         event.target.closest(`#${this.root.id}`))
-        this.onClick(event);
+        this.$onClick(event);
     }
 
-    async onClick(event) {
+    async $onClick(event) {
       event.stopImmediatePropagation();
       event.stopPropagation();
       event.preventDefault();
 
-      const target = this.getEffectiveItem(event.target);
+      const target = this.$getEffectiveItem(event.target);
       if (!target ||
         target.classList.contains('separator') ||
         target.classList.contains('has-submenu') ||
@@ -495,49 +495,49 @@
       this.onCommand(target, event);
     }
 
-    getNextFocusedItemByAccesskey(key) {
+    $getNextFocusedItemByAccesskey(key) {
       for (const attribute of ['access-key', 'sub-access-key']) {
-        const current = this.lastHoverItem || this.lastFocusedItem || this.root.firstChild;
+        const current = this.$lastHoverItem || this.$lastFocusedItem || this.root.firstChild;
         const condition = `@data-${attribute}="${key.toLowerCase()}"`;
-        const item = this.getNextItem(current, condition);
+        const item = this.$getNextItem(current, condition);
         if (item)
           return item;
       }
       return null;
     }
 
-    onKeyDown(event) {
+    $onKeyDown(event) {
       switch (event.key) {
         case 'ArrowUp':
           event.stopPropagation();
           event.preventDefault();
-          this.advanceFocus(-1);
+          this.$advanceFocus(-1);
           break;
 
         case 'ArrowDown':
           event.stopPropagation();
           event.preventDefault();
-          this.advanceFocus(1);
+          this.$advanceFocus(1);
           break;
 
         case 'ArrowRight':
           event.stopPropagation();
           event.preventDefault();
-          this.digIn();
+          this.$digIn();
           break;
 
         case 'ArrowLeft':
           event.stopPropagation();
           event.preventDefault();
-          this.digOut();
+          this.$digOut();
           break;
 
         case 'Home':
           event.stopPropagation();
           event.preventDefault();
-          this.advanceFocus(1, (
-            this.lastHoverItem && this.lastHoverItem.parentNode ||
-          this.lastFocusedItem && this.lastFocusedItem.parentNode ||
+          this.$advanceFocus(1, (
+            this.$lastHoverItem && this.$lastHoverItem.parentNode ||
+          this.$lastFocusedItem && this.$lastFocusedItem.parentNode ||
           this.root
           ).lastChild);
           break;
@@ -545,9 +545,9 @@
         case 'End':
           event.stopPropagation();
           event.preventDefault();
-          this.advanceFocus(-1, (
-            this.lastHoverItem && this.lastHoverItem.parentNode ||
-          this.lastFocusedItem && this.lastFocusedItem.parentNode ||
+          this.$advanceFocus(-1, (
+            this.$lastHoverItem && this.$lastHoverItem.parentNode ||
+          this.$lastFocusedItem && this.$lastFocusedItem.parentNode ||
           this.root
           ).firstChild);
           break;
@@ -555,7 +555,7 @@
         case 'Enter': {
           event.stopPropagation();
           event.preventDefault();
-          const targetItem = this.lastHoverItem || this.lastFocusedItem;
+          const targetItem = this.$lastHoverItem || this.$lastFocusedItem;
           if (targetItem) {
             if (targetItem.classList.contains('disabled'))
               this.close();
@@ -567,22 +567,22 @@
         case 'Escape': {
           event.stopPropagation();
           event.preventDefault();
-          const targetItem = this.lastHoverItem || this.lastFocusedItem;
+          const targetItem = this.$lastHoverItem || this.$lastFocusedItem;
           if (!targetItem ||
             targetItem.parentNode == this.root)
             this.close();
           else
-            this.digOut();
+            this.$digOut();
         }; break;
 
         default:
           if (event.key.length == 1) {
-            const item = this.getNextFocusedItemByAccesskey(event.key);
+            const item = this.$getNextFocusedItemByAccesskey(event.key);
             if (item) {
-              this.lastFocusedItem = item;
-              this.lastFocusedItem.focus();
-              this.setHover(null);
-              if (this.getNextFocusedItemByAccesskey(event.key) == item)
+              this.$lastFocusedItem = item;
+              this.$lastFocusedItem.focus();
+              this.$setHover(null);
+              if (this.$getNextFocusedItemByAccesskey(event.key) == item)
                 this.onCommand(item, event);
             }
           }
@@ -590,7 +590,7 @@
       }
     }
 
-    onKeyUp(event) {
+    $onKeyUp(event) {
       switch (event.key) {
         case 'ArrowUp':
         case 'ArrowDown':
@@ -606,7 +606,7 @@
 
         default:
           if (event.key.length == 1 &&
-            this.getNextFocusedItemByAccesskey(event.key)) {
+            this.$getNextFocusedItemByAccesskey(event.key)) {
             event.stopPropagation();
             event.preventDefault();
           }
@@ -614,7 +614,7 @@
       }
     }
 
-    getPreviousItem(base, condition = '') {
+    $getPreviousItem(base, condition = '') {
       const extrcondition = condition ? `[${condition}]` : '' ;
       const item = (
         MenuUI.$evaluateXPath(
@@ -634,11 +634,11 @@
       ).singleNodeValue
       );
       if (window.getComputedStyle(item, null).display == 'none')
-        return this.getPreviousItem(item, condition);
+        return this.$getPreviousItem(item, condition);
       return item;
     }
 
-    getNextItem(base, condition = '') {
+    $getNextItem(base, condition = '') {
       const extrcondition = condition ? `[${condition}]` : '' ;
       const item = (
         MenuUI.$evaluateXPath(
@@ -658,81 +658,81 @@
       ).singleNodeValue
       );
       if (item && window.getComputedStyle(item, null).display == 'none')
-        return this.getNextItem(item, condition);
+        return this.$getNextItem(item, condition);
       return item;
     }
 
-    advanceFocus(direction, lastFocused = null) {
-      lastFocused = lastFocused || this.lastHoverItem || this.lastFocusedItem;
+    $advanceFocus(direction, lastFocused = null) {
+      lastFocused = lastFocused || this.$lastHoverItem || this.$lastFocusedItem;
       if (!lastFocused) {
         if (direction < 0)
-          this.lastFocusedItem = lastFocused = this.root.firstChild;
+          this.$lastFocusedItem = lastFocused = this.root.firstChild;
         else
-          this.lastFocusedItem = lastFocused = this.root.lastChild;
+          this.$lastFocusedItem = lastFocused = this.root.lastChild;
       }
       if (direction < 0)
-        this.lastFocusedItem = this.getPreviousItem(lastFocused);
+        this.$lastFocusedItem = this.$getPreviousItem(lastFocused);
       else
-        this.lastFocusedItem = this.getNextItem(lastFocused);
-      this.lastFocusedItem.focus();
-      this.lastHoverItem = this.lastFocusedItem;
-      this.setHover(null);
+        this.$lastFocusedItem = this.$getNextItem(lastFocused);
+      this.$lastFocusedItem.focus();
+      this.$lastHoverItem = this.$lastFocusedItem;
+      this.$setHover(null);
     }
 
-    digIn() {
-      if (!this.lastFocusedItem) {
-        this.advanceFocus(1, this.root.lastChild);
+    $digIn() {
+      if (!this.$lastFocusedItem) {
+        this.$advanceFocus(1, this.root.lastChild);
         return;
       }
-      const submenu = this.lastFocusedItem.querySelector('ul');
-      if (!submenu || this.lastFocusedItem.classList.contains('disabled'))
+      const submenu = this.$lastFocusedItem.querySelector('ul');
+      if (!submenu || this.$lastFocusedItem.classList.contains('disabled'))
         return;
-      this.closeOtherSubmenus(this.lastFocusedItem);
-      this.openSubmenuFor(this.lastFocusedItem);
-      this.advanceFocus(1, submenu.lastChild);
+      this.$closeOtherSubmenus(this.$lastFocusedItem);
+      this.$openSubmenuFor(this.$lastFocusedItem);
+      this.$advanceFocus(1, submenu.lastChild);
     }
 
-    digOut() {
-      const targetItem = this.lastHoverItem || this.lastFocusedItem;
+    $digOut() {
+      const targetItem = this.$lastHoverItem || this.$lastFocusedItem;
       if (!targetItem ||
         targetItem.parentNode == this.root)
         return;
-      this.closeOtherSubmenus(targetItem);
-      this.lastFocusedItem = targetItem.parentNode.parentNode;
-      this.closeOtherSubmenus(this.lastFocusedItem);
-      this.lastFocusedItem.classList.remove('open');
-      this.lastFocusedItem.focus();
-      this.lastHoverItem = this.lastFocusedItem;
-      this.setHover(null);
+      this.$closeOtherSubmenus(targetItem);
+      this.$lastFocusedItem = targetItem.parentNode.parentNode;
+      this.$closeOtherSubmenus(this.$lastFocusedItem);
+      this.$lastFocusedItem.classList.remove('open');
+      this.$lastFocusedItem.focus();
+      this.$lastHoverItem = this.$lastFocusedItem;
+      this.$setHover(null);
     }
 
-    onTransitionEnd(event) {
+    $onTransitionEnd(event) {
       const hoverItems = this.root.querySelectorAll('li:hover');
       if (hoverItems.length == 0)
         return;
-      const lastHoverItem = hoverItems[hoverItems.length - 1];
-      const item = this.getEffectiveItem(lastHoverItem);
+      const $lastHoverItem = hoverItems[hoverItems.length - 1];
+      const item = this.$getEffectiveItem($lastHoverItem);
       if (!item)
         return;
       if (item.parentNode != event.target)
         return;
-      this.setHover(item);
+      this.$setHover(item);
       item.focus();
-      this.lastFocusedItem = item;
-      this.lastHoverItem = item;
+      this.$lastFocusedItem = item;
+      this.$lastHoverItem = item;
     }
 
-    onContextMenu(event) {
+    $onContextMenu(event) {
       event.stopImmediatePropagation();
       event.stopPropagation();
       event.preventDefault();
     }
 
 
-    static installStyles() {
+    static $installStyles() {
       this.style = document.createElement('style');
       this.style.setAttribute('type', 'text/css');
-      const common = `.${this.commonClass}`;
+      const common = `.${this.$commonClass}`;
       this.style.textContent = `
         ${common}.menu-ui,
         ${common}.menu-ui ul {
@@ -941,13 +941,13 @@
     }
 
     static init() {
-      MenuUI.uniqueKey   = parseInt(Math.random() * Math.pow(2, 16));
-      MenuUI.commonClass = `menu-ui-${MenuUI.uniqueKey}`;
+      MenuUI.$uniqueKey   = parseInt(Math.random() * Math.pow(2, 16));
+      MenuUI.$commonClass = `menu-ui-${MenuUI.$uniqueKey}`;
 
-      MenuUI.prototype.uniqueKey   = MenuUI.uniqueKey;
-      MenuUI.prototype.commonClass = MenuUI.commonClass;
+      MenuUI.prototype.$uniqueKey   = MenuUI.$uniqueKey;
+      MenuUI.prototype.$commonClass = MenuUI.$commonClass;
 
-      MenuUI.installStyles();
+      MenuUI.$installStyles();
 
       window.MenuUI = MenuUI;
     }
