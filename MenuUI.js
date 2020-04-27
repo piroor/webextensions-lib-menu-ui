@@ -1,5 +1,5 @@
 /*
- license: The MIT License, Copyright (c) 2018 YUKI "Piro" Hiroshi
+ license: The MIT License, Copyright (c) 2018-2020 YUKI "Piro" Hiroshi
  original:
    https://github.com/piroor/webextensions-lib-menu-ui
 */
@@ -143,37 +143,7 @@
       this.lastFocusedItem = null;
       this.lastHoverItem = null;
       this.anchor = options.anchor;
-      for (const item of Array.from(this.root.querySelectorAll('li:not(.separator)'))) {
-        item.setAttribute('tabindex', -1);
-        item.classList.remove('open');
-        this.updateAccessKey(item);
-        const icon = item.querySelector('span.icon') || document.createElement('span');
-        if (!icon.parentNode) {
-          icon.classList.add('icon');
-          item.insertBefore(icon, item.firstChild);
-        }
-        if (item.dataset.icon) {
-          if (item.dataset.iconColor) {
-            item.style.backgroundImage = '';
-            icon.style.backgroundColor = item.dataset.iconColor;
-            icon.style.mask            = `url(${JSON.stringify(item.dataset.icon)}) no-repeat center / 100%`;
-          }
-          else {
-            item.style.backgroundImage = `url(${JSON.stringify(item.dataset.icon)})`;
-            icon.style.backgroundColor =
-              icon.style.mask = '';
-          }
-        }
-        else {
-          item.style.backgroundImage =
-            icon.style.backgroundColor =
-            icon.style.mask = '';
-        }
-        if (item.querySelector('ul'))
-          item.classList.add('has-submenu');
-        else
-          item.classList.remove('has-submenu');
-      }
+      this.updateItems(this.root);
       this.root.classList.add('open');
       this.screen.classList.add('open');
       this.marker.classList.remove('top');
@@ -183,14 +153,7 @@
         this.marker.style.transition = `opacity ${this.animationDuration}ms ease-out`;
         this.marker.classList.add('open');
       }
-      const menus = [this.root].concat(Array.from(this.root.querySelectorAll('ul')));
-      for (const menu of menus) {
-        if (this.animationDuration)
-          menu.style.transition = `opacity ${this.animationDuration}ms ease-out`;
-        else
-          menu.style.transition = '';
-        this.updatePosition(menu, options);
-      }
+      this.updatePositions(this.root, options);
       this.onShown();
       return new Promise(async (resolve, _reject) => {
         await MenuUI.$wait(0);
@@ -225,6 +188,56 @@
       catch(_e) {
       }
       return false;
+    }
+
+    updateMenuItem(item) {
+      this.updateItems(item);
+      this.updatePositions(item);
+    }
+
+    updateItems(parent) {
+      for (const item of parent.querySelectorAll('li:not(.separator)')) {
+        item.setAttribute('tabindex', -1);
+        item.classList.remove('open');
+        this.updateAccessKey(item);
+        const icon = item.querySelector('span.icon') || document.createElement('span');
+        if (!icon.parentNode) {
+          icon.classList.add('icon');
+          item.insertBefore(icon, item.firstChild);
+        }
+        if (item.dataset.icon) {
+          if (item.dataset.iconColor) {
+            item.style.backgroundImage = '';
+            icon.style.backgroundColor = item.dataset.iconColor;
+            icon.style.mask            = `url(${JSON.stringify(item.dataset.icon)}) no-repeat center / 100%`;
+          }
+          else {
+            item.style.backgroundImage = `url(${JSON.stringify(item.dataset.icon)})`;
+            icon.style.backgroundColor =
+              icon.style.mask = '';
+          }
+        }
+        else {
+          item.style.backgroundImage =
+            icon.style.backgroundColor =
+            icon.style.mask = '';
+        }
+        if (item.querySelector('ul'))
+          item.classList.add('has-submenu');
+        else
+          item.classList.remove('has-submenu');
+      }
+    }
+
+    updatePositions(parent, options = {}) {
+      const menus = [parent].concat(Array.from(parent.querySelectorAll('ul')));
+      for (const menu of menus) {
+        if (this.animationDuration)
+          menu.style.transition = `opacity ${this.animationDuration}ms ease-out`;
+        else
+          menu.style.transition = '';
+        this.updatePosition(menu, options);
+      }
     }
 
     updatePosition(menu, options = {}) {
