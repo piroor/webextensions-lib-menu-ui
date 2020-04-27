@@ -418,7 +418,7 @@
     }
 
     setHover(item) {
-      for (const item of Array.from(this.root.querySelectorAll('li.hover'))) {
+      for (const item of this.root.querySelectorAll('li.hover')) {
         if (item != item)
           item.classList.remove('hover');
       }
