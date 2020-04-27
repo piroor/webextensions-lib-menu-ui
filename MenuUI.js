@@ -247,7 +247,8 @@
       const menuRect      = menu.getBoundingClientRect();
 
       if (options.anchor &&
-        (left === undefined || top === undefined)) {
+          (left === undefined || top === undefined) &&
+          menu == this.root) {
         const anchorRect = options.anchor.getBoundingClientRect();
         if ($containerRect.bottom - anchorRect.bottom >= menuRect.height) {
           top = anchorRect.bottom;
@@ -263,7 +264,7 @@
         }
         else {
           top = Math.max(0, $containerRect.top - menuRect.height);
-          this.$marker.classList.add('bottom');
+          this.$marker.classList.remove('bottom');
           this.$marker.classList.remove('top');
           this.$marker.style.top = `calc(${top}px + ${menuRect.height}px - 0.6em)`;
         }
