@@ -371,10 +371,9 @@
     }
 
     focusTo(item) {
-      if (item == this.$lastFocusedItem)
-        return;
       this.$lastFocusedItem = this.$lastHoverItem = item;
       this.$lastFocusedItem.focus();
+      this.$lastFocusedItem.scrollIntoView();
     }
 
     $onBlur(event) {
@@ -399,8 +398,7 @@
       if (!item) {
         if (this.$lastFocusedItem) {
           if (this.$lastFocusedItem.parentNode != this.root) {
-            this.$lastFocusedItem = this.$lastFocusedItem.parentNode.parentNode;
-            this.$lastFocusedItem.focus();
+            this.focusTo(this.$lastFocusedItem.parentNode.parentNode);
           }
           else {
             this.$lastFocusedItem.blur();
@@ -413,8 +411,7 @@
 
       this.$setHover(item);
       this.$closeOtherSubmenus(item);
-      item.focus();
-      this.$lastFocusedItem = item;
+      this.focusTo(item);
 
       this.delayedOpen = {
         item:  item,
@@ -587,8 +584,7 @@
           if (event.key.length == 1) {
             const item = this.$getNextFocusedItemByAccesskey(event.key);
             if (item) {
-              this.$lastFocusedItem = item;
-              this.$lastFocusedItem.focus();
+              this.focusTo(item);
               this.$setHover(null);
               if (this.$getNextFocusedItemByAccesskey(event.key) == item)
                 this.onCommand(item, event);
@@ -678,12 +674,7 @@
         else
           this.$lastFocusedItem = lastFocused = this.root.lastChild;
       }
-      if (direction < 0)
-        this.$lastFocusedItem = this.$getPreviousItem(lastFocused);
-      else
-        this.$lastFocusedItem = this.$getNextItem(lastFocused);
-      this.$lastFocusedItem.focus();
-      this.$lastHoverItem = this.$lastFocusedItem;
+      this.focusTo(direction < 0 ? this.$getPreviousItem(lastFocused) : this.$getNextItem(lastFocused));
       this.$setHover(null);
     }
 
@@ -709,8 +700,7 @@
       this.$lastFocusedItem = targetItem.parentNode.parentNode;
       this.$closeOtherSubmenus(this.$lastFocusedItem);
       this.$lastFocusedItem.classList.remove('open');
-      this.$lastFocusedItem.focus();
-      this.$lastHoverItem = this.$lastFocusedItem;
+      this.focusTo(targetItem.parentNode.parentNode);
       this.$setHover(null);
     }
 
@@ -725,9 +715,7 @@
       if (item.parentNode != event.target)
         return;
       this.$setHover(item);
-      item.focus();
-      this.$lastFocusedItem = item;
-      this.$lastHoverItem = item;
+      this.focusTo(item);
     }
 
     $onContextMenu(event) {
