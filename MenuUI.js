@@ -738,6 +738,7 @@
         ${common}.menu-ui ul {
           background-color: var(--menu-ui-background-color);
           color: var(--menu-ui-text-color);
+          cursor: default;
           margin: 0;
           max-height: calc(100% - 6px);
           max-width: calc(100% - 6px);
