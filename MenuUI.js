@@ -787,8 +787,9 @@
           padding: 0;
         }
 
-        ${common}.menu-ui li.has-submenu {
-          padding-right: 1.5em;
+        ${common}.menu-ui li.has-submenu,
+        ${common}.menu-ui.menu li.has-submenu {
+          padding-right: 1em;
         }
         ${common}.menu-ui li.has-submenu::after {
           content: "❯";
