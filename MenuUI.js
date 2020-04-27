@@ -370,6 +370,13 @@
       };
     }
 
+    focusTo(item) {
+      if (item == this.$lastFocusedItem)
+        return;
+      this.$lastFocusedItem = this.$lastHoverItem = item;
+      this.$lastFocusedItem.focus();
+    }
+
     $onBlur(event) {
       if (event.target == document)
         this.close();
