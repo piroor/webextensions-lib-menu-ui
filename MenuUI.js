@@ -386,7 +386,7 @@
     focusTo(item) {
       this.$lastFocusedItem = this.$lastHoverItem = item;
       this.$lastFocusedItem.focus();
-      this.$lastFocusedItem.scrollIntoView();
+      this.$lastFocusedItem.scrollIntoView({ block: 'nearest' });
     }
 
     $onBlur(event) {
