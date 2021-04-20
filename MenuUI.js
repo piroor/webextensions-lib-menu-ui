@@ -82,6 +82,7 @@
       this.root.classList.add(this.$commonClass);
       this.root.classList.add('menu-ui');
       this.root.classList.add(this.appearance);
+      this.root.setAttribute('role', 'menu');
 
       this.$screen = document.createElement('div');
       this.$screen.classList.add(this.$commonClass);
@@ -198,9 +199,16 @@
     }
 
     $updateItems(parent) {
+      parent.setAttribute('role', 'menu');
       for (const item of parent.querySelectorAll('li:not(.separator)')) {
         item.setAttribute('tabindex', -1);
         item.classList.remove('open');
+        if (item.classList.contains('checkbox'))
+          item.setAttribute('role', 'menuitemcheckbox');
+        else if (item.classList.contains('radio'))
+          item.setAttribute('role', 'menuitemradio');
+        else
+          item.setAttribute('role', 'menuitem');
         this.$updateAccessKey(item);
         const icon = item.querySelector('span.icon') || document.createElement('span');
         if (!icon.parentNode) {
