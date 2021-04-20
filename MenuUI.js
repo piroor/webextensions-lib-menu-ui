@@ -203,12 +203,24 @@
       for (const item of parent.querySelectorAll('li:not(.separator)')) {
         item.setAttribute('tabindex', -1);
         item.classList.remove('open');
+
         if (item.classList.contains('checkbox'))
           item.setAttribute('role', 'menuitemcheckbox');
         else if (item.classList.contains('radio'))
           item.setAttribute('role', 'menuitemradio');
         else
           item.setAttribute('role', 'menuitem');
+
+        if (item.matches('.checked, .radio')) {
+          if (item.classList.contains('checked'))
+            item.setAttribute('aria-checked', 'true');
+          else
+            item.setAttribute('aria-checked', 'false');
+        }
+        else {
+          item.removeAttribute('aria-checked');
+        }
+
         this.$updateAccessKey(item);
         const icon = item.querySelector('span.icon') || document.createElement('span');
         if (!icon.parentNode) {
