@@ -208,6 +208,8 @@
           item.setAttribute('role', 'menuitemcheckbox');
         else if (item.classList.contains('radio'))
           item.setAttribute('role', 'menuitemradio');
+        else if (item.classList.contains('separator'))
+          item.setAttribute('role', 'separator');
         else
           item.setAttribute('role', 'menuitem');
 
