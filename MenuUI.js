@@ -468,7 +468,7 @@
 
     $openSubmenuFor(item) {
       const items = MenuUI.$evaluateXPath(
-        `ancestor-or-self::li[${MenuUI.$hasClass('has-submenu')}]`,
+        `ancestor-or-self::li[${MenuUI.$hasClass('has-submenu')}][:not(${MenuUI.$hasClass('disabled')})]`,
         item
       );
       for (const item of MenuUI.$getArrayFromXPathResult(items)) {
