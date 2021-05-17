@@ -621,8 +621,12 @@
             if (item) {
               this.focusTo(item);
               this.$setHover(null);
-              if (this.$getNextFocusedItemByAccesskey(event.key) == item)
-                this.onCommand(item, event);
+              if (this.$getNextFocusedItemByAccesskey(event.key) == item) {
+                if (item.querySelector('ul'))
+                  this.$digIn();
+                else
+                  this.onCommand(item, event);
+              }
             }
           }
           return;
