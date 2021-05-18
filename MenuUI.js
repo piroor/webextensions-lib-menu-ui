@@ -621,7 +621,8 @@
             if (item) {
               this.focusTo(item);
               this.$setHover(null);
-              if (this.$getNextFocusedItemByAccesskey(event.key) == item) {
+              if (this.$getNextFocusedItemByAccesskey(event.key) == item &&
+                  !item.classList.contains('disabled')) {
                 if (item.querySelector('ul'))
                   this.$digIn();
                 else
