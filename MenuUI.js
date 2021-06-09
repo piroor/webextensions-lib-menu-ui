@@ -1,5 +1,5 @@
 /*
- license: The MIT License, Copyright (c) 2018-2020 YUKI "Piro" Hiroshi
+ license: The MIT License, Copyright (c) 2018-2021 YUKI "Piro" Hiroshi
  original:
    https://github.com/piroor/webextensions-lib-menu-ui
 */
@@ -950,13 +950,14 @@
           visibility: visible;
         }
 
-        ${common}.menu-ui.menu li[data-icon]:not([data-icon-color]),
-        ${common}.menu-ui.panel li[data-icon]:not([data-icon-color]) {
-          background-position: calc(1em - 16px + 0.5em) center;
+        ${common}.menu-ui.panel li[data-icon] {
+          --icon-size: 16px;
+          padding-left: calc(var(--icon-size) + 0.7em);
         }
 
-        ${common}.menu-ui.panel li[data-icon] {
-          padding-left: calc(16px + 0.2em);
+        ${common}.menu-ui.menu li[data-icon]:not([data-icon-color]),
+        ${common}.menu-ui.panel li[data-icon]:not([data-icon-color]) {
+          background-position: 0.5em center;
         }
 
         ${common}.menu-ui li[data-icon]:not([data-icon-color]) .icon {
@@ -965,13 +966,13 @@
 
         ${common}.menu-ui li[data-icon][data-icon-color] .icon {
           display: inline-block;
-          height: 1em;
+          height: var(--icon-size);
           left: 0.5em;
-          max-height: 1em;
-          max-width: 1em;
+          max-height: var(--icon-size);
+          max-width: var(--icon-size);
           position: absolute;
           margin-top: 0.15em;
-          width: 1em;
+          width: var(--icon-size);
         }
       `;
       document.head.appendChild(this.style);
