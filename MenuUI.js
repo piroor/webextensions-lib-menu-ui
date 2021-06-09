@@ -971,7 +971,6 @@
           max-height: var(--icon-size);
           max-width: var(--icon-size);
           position: absolute;
-          margin-top: 0.15em;
           width: var(--icon-size);
         }
       `;
