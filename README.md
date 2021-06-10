@@ -1,6 +1,6 @@
 # webextensions-lib-menu-ui
 
-[![Build Status](https://travis-ci.org/piroor/webextensions-lib-menu-ui.svg?branch=trunk)](https://travis-ci.org/piroor/webextensions-lib-menu-ui)
+![Build Status](https://github.com/piroor/webextensions-lib-menu-ui/actions/workflows/main.yml/badge.svg?branch=trunk)
 
 Helps to provide menu like UI.
 
