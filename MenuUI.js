@@ -56,6 +56,7 @@
     constructor(params = {}) {
       this.$lastHoverItem   = null;
       this.$lastFocusedItem = null;
+      this.$mouseDownFired  = false;
 
       this.root              = params.root;
       this.onCommand         = params.onCommand || (() => {});
@@ -364,6 +365,7 @@
       this.$mouseDownAfterOpen = false;
       this.$lastFocusedItem = null;
       this.$lastHoverItem = null;
+      this.$mouseDownFired = false;
       this.anchor = null;
       this.canceller = null;
       return new Promise((resolve, _reject) => {
@@ -496,6 +498,7 @@
       event.stopPropagation();
       event.preventDefault();
       this.$mouseDownAfterOpen = true;
+      this.$mouseDownFired = true;
     }
 
     $getEffectiveItem(node) {
@@ -527,7 +530,8 @@
         target.classList.contains('separator') ||
         target.classList.contains('has-submenu') ||
         target.classList.contains('disabled')) {
-        if (!event.target.closest(`#${this.root.id}`))
+        if (this.$mouseDownFired && // ignore "click" event triggered by a mousedown fired before the menu is opened (like long-press)
+            !event.target.closest(`#${this.root.id}`))
           return this.close();
         return;
       }
