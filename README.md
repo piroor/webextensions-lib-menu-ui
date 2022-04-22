@@ -82,6 +82,8 @@ Here is the list of parameters for the `MenuUI` constructor:
  * `animationDuration` (optional): The duration of the animation of fade-in-out effect, in milliseconds. (`Integer`, default value is `150`.)
  * `subMenuOpenDelay` (optional): The delay when a submenu is opened after its parent item is pointed, in milliseconds. (`Integer`, default value is `300`.)
  * `subMenuCloseDelay` (optional): The delay when a submenu is closed after foreign item is pointed, in milliseconds. (`Integer`, default value is `300`.)
+ * `incrementalSearch` (optional): Activate incremental search mode or not. (`Boolean`, default value is `false`.)
+ * `incrementalSearchTimeout` (optional): Timeout seconds to clear last incremental search buffer. (`Integer`, default value is `1000`.)
 
 
 ## Features of instances
