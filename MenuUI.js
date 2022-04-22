@@ -670,16 +670,16 @@
           base,
           XPathResult.FIRST_ORDERED_NODE_TYPE
         ).singleNodeValue ||
-      MenuUI.$evaluateXPath(
-        `following-sibling::li[not(${MenuUI.$hasClass('separator')})]${extrcondition}[last()]`,
-        base,
-        XPathResult.FIRST_ORDERED_NODE_TYPE
-      ).singleNodeValue ||
-      MenuUI.$evaluateXPath(
-        `self::li[not(${MenuUI.$hasClass('separator')})]${extrcondition}`,
-        base,
-        XPathResult.FIRST_ORDERED_NODE_TYPE
-      ).singleNodeValue
+        MenuUI.$evaluateXPath(
+          `following-sibling::li[not(${MenuUI.$hasClass('separator')})]${extrcondition}[last()]`,
+          base,
+          XPathResult.FIRST_ORDERED_NODE_TYPE
+        ).singleNodeValue ||
+        MenuUI.$evaluateXPath(
+          `self::li[not(${MenuUI.$hasClass('separator')})]${extrcondition}`,
+          base,
+          XPathResult.FIRST_ORDERED_NODE_TYPE
+        ).singleNodeValue
       );
       if (window.getComputedStyle(item, null).display == 'none')
         return this.$getPreviousItem(item, condition);
@@ -694,16 +694,16 @@
           base,
           XPathResult.FIRST_ORDERED_NODE_TYPE
         ).singleNodeValue ||
-      MenuUI.$evaluateXPath(
-        `preceding-sibling::li[not(${MenuUI.$hasClass('separator')})]${extrcondition}[last()]`,
-        base,
-        XPathResult.FIRST_ORDERED_NODE_TYPE
-      ).singleNodeValue ||
-      MenuUI.$evaluateXPath(
-        `self::li[not(${MenuUI.$hasClass('separator')})]${extrcondition}`,
-        base,
-        XPathResult.FIRST_ORDERED_NODE_TYPE
-      ).singleNodeValue
+        MenuUI.$evaluateXPath(
+          `preceding-sibling::li[not(${MenuUI.$hasClass('separator')})]${extrcondition}[last()]`,
+          base,
+          XPathResult.FIRST_ORDERED_NODE_TYPE
+        ).singleNodeValue ||
+        MenuUI.$evaluateXPath(
+          `self::li[not(${MenuUI.$hasClass('separator')})]${extrcondition}`,
+          base,
+          XPathResult.FIRST_ORDERED_NODE_TYPE
+        ).singleNodeValue
       );
       if (item && window.getComputedStyle(item, null).display == 'none')
         return this.$getNextItem(item, condition);
