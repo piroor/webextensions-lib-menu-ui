@@ -1,5 +1,5 @@
 /*
- license: The MIT License, Copyright (c) 2018-2021 YUKI "Piro" Hiroshi
+ license: The MIT License, Copyright (c) 2018-2023 YUKI "Piro" Hiroshi
  original:
    https://github.com/piroor/webextensions-lib-menu-ui
 */
@@ -885,7 +885,7 @@
         ${common}.menu-ui li.checkbox.checked::before {
           content: "✔";
           position: absolute;
-          left: 0.25em;
+          left: 0.5em;
         }
 
         ${common}.menu-ui li.separator {
@@ -963,10 +963,23 @@
           opacity: 0.5;
         }
 
-        ${common}.menu-ui li[data-icon] {
+        ${common}.menu-ui li[data-icon],
+        ${common}.menu-ui.menu li[data-icon],
+        ${common}.menu-ui.panel li[data-icon] {
+          --icon-size: 16px;
           background-position: left center;
           background-repeat: no-repeat;
-          background-size: 16px;
+          background-size: var(--icon-size);
+          padding-left: calc(var(--icon-size) + 0.7em);
+        }
+
+        ${common}.menu-ui li.checkbox,
+        ${common}.menu-ui li.radio,
+        ${common}.menu-ui.menu li.checkbox,
+        ${common}.menu-ui.panel li.checkbox,
+        ${common}.menu-ui.menu li.radio,
+        ${common}.menu-ui.panel li.radio {
+          padding-left: 1.7em;
         }
 
         /* panel-like appearance */
@@ -987,7 +1000,7 @@
         }
 
         ${common}.menu-ui.panel li {
-          padding: 0.15em 1em;
+          padding: 0.15em 1em 0.15em 0.7em;
         }
 
 
@@ -1010,7 +1023,7 @@
         }
 
         ${common}.menu-ui.menu li {
-          padding: 0.15em 0.5em 0.15em 1.5em;
+          padding: 0.15em 0.5em 0.15em 0.7em;
         }
 
         ${common}.menu-ui.menu li.separator {
@@ -1023,16 +1036,12 @@
           visibility: visible;
         }
 
-        ${common}.menu-ui.panel li[data-icon] {
-          --icon-size: 16px;
-          padding-left: calc(var(--icon-size) + 0.7em);
-        }
-
         ${common}.menu-ui.menu li[data-icon]:not([data-icon-color]),
         ${common}.menu-ui.panel li[data-icon]:not([data-icon-color]) {
           background-position: 0.5em center;
         }
 
+        ${common}.menu-ui li:not([data-icon]) .icon,
         ${common}.menu-ui li[data-icon]:not([data-icon-color]) .icon {
           display: none;
         }
