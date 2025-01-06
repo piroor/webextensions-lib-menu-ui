@@ -1,5 +1,5 @@
 /*
- license: The MIT License, Copyright (c) 2018-2023 YUKI "Piro" Hiroshi
+ license: The MIT License, Copyright (c) 2018-2025 YUKI "Piro" Hiroshi
  original:
    https://github.com/piroor/webextensions-lib-menu-ui
 */
@@ -53,6 +53,23 @@
       return array;
     }
 
+    RTL_LANGUAGES = new Set([
+      'ar',
+      'he',
+      'fa',
+      'ur',
+    ]);
+
+    get isRTL() {
+      const lang = (
+        navigator.language ||
+        navigator.userLanguage ||
+        //(new Intl.DateTimeFormat()).resolvedOptions().locale ||
+        ''
+      ).split('-')[0];
+      return this.RTL_LANGUAGES.has(lang);
+    }
+
     constructor(params = {}) {
       this.$lastHoverItem   = null;
       this.$lastFocusedItem = null;
@@ -78,6 +95,8 @@
       this.$onKeyUp           = this.$onKeyUp.bind(this);
       this.$onTransitionEnd   = this.$onTransitionEnd.bind(this);
       this.$onContextMenu     = this.$onContextMenu.bind(this);
+
+      this.root.classList.toggle('rtl', this.isRTL);
 
       if (!this.root.id)
         this.root.id = `MenuUI-root-${this.$uniqueKey}-${parseInt(Math.random() * Math.pow(2, 16))}`;
@@ -303,13 +322,31 @@
           this.$marker.style.top = `calc(${top}px + ${menuRect.height}px - 0.6em)`;
         }
 
-        if (containerRect.right - anchorRect.left >= menuRect.width) {
-          left = anchorRect.left;
-          this.$marker.style.left = `calc(${left}px + 0.5em)`;
-        }
-        else if (anchorRect.left - containerRect.left >= menuRect.width) {
-          left = Math.max(0, anchorRect.right - menuRect.width);
-          this.$marker.style.left = `calc(${left}px + ${menuRect.width}px - 1.5em)`;
+        const canPlaceAtRight = containerRect.right - anchorRect.left >= menuRect.width;
+        const canPlaceAtLeft  = anchorRect.left - containerRect.left >= menuRect.width;
+
+        if (canPlaceAtRight || canPlaceAtLeft) {
+          if (this.isRTL) {
+            if (canPlaceAtLeft) {
+              left = Math.max(0, anchorRect.right - menuRect.width);
+              this.$marker.style.left = `calc(${left}px + ${menuRect.width}px - 1.5em)`;
+            }
+            else {
+              left = anchorRect.left;
+              this.$marker.style.left = `calc(${left}px + 0.5em)`;
+            }
+          }
+          else {
+            if (canPlaceAtRight) {
+              left = anchorRect.left;
+              this.$marker.style.left = `calc(${left}px + 0.5em)`;
+            }
+            else {
+              left = Math.max(0, anchorRect.right - menuRect.width);
+              this.$marker.style.left = `calc(${left}px + ${menuRect.width}px - 1.5em)`;
+            }
+          }
+
         }
         else {
           left = Math.max(0, containerRect.left - menuRect.width);
@@ -320,12 +357,15 @@
       let parentRect;
       if (menu.parentNode.localName == 'li') {
         parentRect = menu.parentNode.getBoundingClientRect();
-        left = parentRect.right;
+        left = this.isRTL ? parentRect.left - menuRect.width : parentRect.right;
         top  = parentRect.top;
       }
 
       if (left === undefined)
         left = Math.max(0, (containerRect.width - menuRect.width) / 2);
+      else if (this.isRTL)
+        left -= menuRect.width;
+
       if (top === undefined)
         top = Math.max(0, (containerRect.height - menuRect.height) / 2);
 
@@ -601,13 +641,19 @@
         case 'ArrowRight':
           event.stopPropagation();
           event.preventDefault();
-          this.$digIn();
+          if (this.isRTL)
+            this.$digOut();
+          else
+            this.$digIn();
           break;
 
         case 'ArrowLeft':
           event.stopPropagation();
           event.preventDefault();
-          this.$digOut();
+          if (this.isRTL)
+            this.$digIn();
+          else
+            this.$digOut();
           break;
 
         case 'Home':
@@ -858,6 +904,9 @@
           position: fixed;
           z-index: 999999;
         }
+        ${common}.menu-ui.rtl {
+          direction: rtl;
+        }
 
         ${common}.menu-ui.open,
         ${common}.menu-ui.open li.open > ul {
@@ -902,8 +951,13 @@
         ${common}.menu-ui li.has-submenu::after {
           content: "❯";
           position: absolute;
-          right: 0.25em;
           transform: scale(0.75);
+        }
+        ${common}.menu-ui:not(.rtl) li.has-submenu::after {
+          right: 0.25em;
+        }
+        ${common}.menu-ui.rtl li.has-submenu::after {
+          left: 0.25em;
         }
 
         ${common}.menu-ui .accesskey {
@@ -967,10 +1021,19 @@
         ${common}.menu-ui.menu li[data-icon],
         ${common}.menu-ui.panel li[data-icon] {
           --icon-size: 16px;
-          background-position: left center;
           background-repeat: no-repeat;
           background-size: var(--icon-size);
-          padding-left: calc(var(--icon-size) + 0.7em);
+          padding-inline-start: calc(var(--icon-size) + 0.7em);
+        }
+        ${common}.menu-ui:not(.rtl) li[data-icon],
+        ${common}.menu-ui:not(.rtl).menu li[data-icon],
+        ${common}.menu-ui:not(.rtl).panel li[data-icon] {
+          background-position: left center;
+        }
+        ${common}.menu-ui.rtl li[data-icon],
+        ${common}.menu-ui.rtl.menu li[data-icon],
+        ${common}.menu-ui.rtl.panel li[data-icon] {
+          background-position: right center;
         }
 
         ${common}.menu-ui li.checkbox,
@@ -979,7 +1042,7 @@
         ${common}.menu-ui.panel li.checkbox,
         ${common}.menu-ui.menu li.radio,
         ${common}.menu-ui.panel li.radio {
-          padding-left: 1.7em;
+          padding-inline-start: 1.7em;
         }
 
         /* panel-like appearance */
@@ -1049,11 +1112,16 @@
         ${common}.menu-ui li[data-icon][data-icon-color] .icon {
           display: inline-block;
           height: var(--icon-size);
-          left: 0.5em;
           max-height: var(--icon-size);
           max-width: var(--icon-size);
           position: absolute;
           width: var(--icon-size);
+        }
+        ${common}.menu-ui:not(.rtl) li[data-icon][data-icon-color] .icon {
+          left: 0.5em;
+        }
+        ${common}.menu-ui.rtl li[data-icon][data-icon-color] .icon {
+          right: 0.5em;
         }
       `;
       document.head.appendChild(this.style);
