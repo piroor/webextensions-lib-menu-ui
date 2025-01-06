@@ -11,6 +11,9 @@ export default [{
         },
 
         parser: babelParser,
+        parserOptions: {
+            requireConfigFile: false,
+        },
         ecmaVersion: 2020,
         sourceType: "script",
     },
