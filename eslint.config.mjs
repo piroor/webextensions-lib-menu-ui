@@ -16,6 +16,7 @@ export default [{
         parserOptions: {
             requireConfigFile: false,
         },
+
         ecmaVersion: 2020,
         sourceType: "script",
     },
