@@ -1099,9 +1099,13 @@
           visibility: visible;
         }
 
-        ${common}.menu-ui.menu li[data-icon]:not([data-icon-color]),
-        ${common}.menu-ui.panel li[data-icon]:not([data-icon-color]) {
+        ${common}.menu-ui.menu:not(.rtl) li[data-icon]:not([data-icon-color]),
+        ${common}.menu-ui.panel:not(.rtl) li[data-icon]:not([data-icon-color]) {
           background-position: 0.5em center;
+        }
+        ${common}.menu-ui.menu.rtl li[data-icon]:not([data-icon-color]),
+        ${common}.menu-ui.panel.rtl li[data-icon]:not([data-icon-color]) {
+          background-position: calc(100% - 0.5em) center;
         }
 
         ${common}.menu-ui li:not([data-icon]) .icon,
