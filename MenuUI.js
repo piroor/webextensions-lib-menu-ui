@@ -939,7 +939,7 @@
         ${common}.menu-ui li.checkbox.checked::before {
           content: "✔";
           position: absolute;
-          left: 0.5em;
+          inset-inline-start: 0.5em;
         }
 
         ${common}.menu-ui li.separator {
@@ -951,18 +951,13 @@
 
         ${common}.menu-ui li.has-submenu,
         ${common}.menu-ui.menu li.has-submenu {
-          padding-right: 1em;
+          padding-inline-end: 1em;
         }
         ${common}.menu-ui li.has-submenu::after {
           content: "❯";
+          inset-inline-end: 0.25em;
           position: absolute;
           transform: scale(0.75);
-        }
-        ${common}.menu-ui:not(.rtl) li.has-submenu::after {
-          right: 0.25em;
-        }
-        ${common}.menu-ui.rtl li.has-submenu::after {
-          left: 0.25em;
         }
 
         ${common}.menu-ui .accesskey {
@@ -1117,16 +1112,11 @@
         ${common}.menu-ui li[data-icon][data-icon-color] .icon {
           display: inline-block;
           height: var(--icon-size);
+          inset-inline-start: 0.5em;
           max-height: var(--icon-size);
           max-width: var(--icon-size);
           position: absolute;
           width: var(--icon-size);
-        }
-        ${common}.menu-ui:not(.rtl) li[data-icon][data-icon-color] .icon {
-          left: 0.5em;
-        }
-        ${common}.menu-ui.rtl li[data-icon][data-icon-color] .icon {
-          right: 0.5em;
         }
       `;
       document.head.appendChild(this.style);
