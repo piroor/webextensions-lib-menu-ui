@@ -58,6 +58,11 @@
       'he',
       'fa',
       'ur',
+      'ps',
+      'sd',
+      'ckb',
+      'prs',
+      'rhg',
     ]);
 
     get isRTL() {
